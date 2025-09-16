@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Flashcards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            user-select: none;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            height: 400px;
+            position: relative;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 2rem;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        .button {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 0.5rem;
+            padding: 1.25rem 1rem;
+        }
+
+        .button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .correct-btn {
+            background-color: #4CAF50;
+        }
+
+        .correct-btn:hover {
+            background-color: #45a049;
+        }
+
+        .incorrect-btn {
+            background-color: #F44336;
+        }
+
+        .incorrect-btn:hover {
+            background-color: #e53935;
+        }
+
+        .main-btn {
+            background-color: #6366F1;
+        }
+
+        .main-btn:hover {
+            background-color: #4338CA;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+    <div class="container">
+        <div id="flashcard-container">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">Management Flashcards</h1>
+            <div id="flashcard" class="card">
+                <div id="card-front" class="card-face">
+                    <p id="question-text" class="text-xl text-gray-700 mb-6 font-semibold"></p>
+                </div>
+                <div id="card-back" class="card-face card-back">
+                    <p id="answer-text" class="text-xl text-gray-700 mb-6"></p>
+                </div>
+            </div>
+            <div id="controls" class="flex flex-col sm:flex-row mt-6 gap-4">
+                <button id="flip-button"
+                    class="button w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold my-2">Flip
+                    Card</button>
+                <div id="self-assess-buttons" class="hidden flex-col sm:flex-row w-full gap-4">
+                    <button id="correct-button"
+                        class="button flex-1 correct-btn text-white font-bold my-2">I got it right!</button>
+                    <button id="incorrect-button"
+                        class="button flex-1 incorrect-btn text-white font-bold my-2">I got it wrong.</button>
+                </div>
+            </div>
+            <div id="progress" class="mt-8 text-center">
+                <p id="progress-text" class="text-lg text-gray-600 font-medium">Card 1 of 17</p>
+            </div>
+        </div>
+        <div id="result-screen" class="card hidden mt-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Flashcard Session Complete!</h2>
+            <p id="final-score" class="text-xl font-bold text-green-600 mb-4"></p>
+            <button id="restart-button"
+                class="button main-btn text-white font-bold py-2 px-6 rounded-lg w-full">Start Over</button>
+        </div>
+    </div>
+
+    <script>
+        // Array of questions and their answer keys
+        const quizData = [{
+                question: "What is the purpose of an organizational chart?",
+                options: [
+                    "To show the company's financial records.",
+                    "To show the structure of a business, including positions and reporting lines.",
+                    "To list all the customers of the company.",
+                    "To advertise new products."
+                ],
+                answer: "To show the structure of a business, including positions and reporting lines."
+            },
+            {
+                question: "Why are managers important in a business?",
+                options: [
+                    "They are responsible for cleaning the office.",
+                    "They are responsible for planning, organizing, and controlling the work of others.",
+                    "They are the only ones who can sell products.",
+                    "They write the company's annual report."
+                ],
+                answer: "They are responsible for planning, organizing, and controlling the work of others."
+            },
+            {
+                question: "Which of these is NOT one of the five functions of management?",
+                options: [
+                    "Planning",
+                    "Delegating",
+                    "Organizing",
+                    "Controlling"
+                ],
+                answer: "Delegating"
+            },
+            {
+                question: "Why might a manager be afraid to delegate tasks?",
+                options: [
+                    "They want to be the only person working.",
+                    "They don't trust their employees to do a good job.",
+                    "They are worried about getting a promotion.",
+                    "The company does not allow delegation."
+                ],
+                answer: "They don't trust their employees to do a good job."
+            },
+            {
+                question: "What is the key difference between a tall and a flat organization?",
+                options: [
+                    "Tall organizations have fewer employees.",
+                    "Tall organizations have more levels of management.",
+                    "Flat organizations have a narrow span of control.",
+                    "Flat organizations have higher costs."
+                ],
+                answer: "Tall organizations have more levels of management."
+            },
+            {
+                question: "A manager who uses a laissez-faire leadership style is most likely to give their employees:",
+                options: [
+                    "Strict commands with little freedom.",
+                    "Detailed instructions for every task.",
+                    "Limited responsibility for their work.",
+                    "A lot of freedom to make their own decisions."
+                ],
+                answer: "A lot of freedom to make their own decisions."
+            },
+            {
+                question: "Which of the following is an advantage of a business delayering its management structure?",
+                options: [
+                    "It increases the number of managers.",
+                    "It can lead to a costly redundancy payment.",
+                    "It can improve communication and make decision-making faster.",
+                    "It makes the span of control narrower."
+                ],
+                answer: "It can improve communication and make decision-making faster."
+            },
+            {
+                question: "What is a **'span of control'**?",
+                options: [
+                    "The number of customers a business has.",
+                    "The number of products a company sells.",
+                    "The number of employees who report directly to one manager.",
+                    "The total number of managers in a business."
+                ],
+                answer: "The number of employees who report directly to one manager."
+            },
+            {
+                question: "Which leadership style involves a manager making all the decisions without consulting their employees?",
+                options: [
+                    "Democratic",
+                    "Laissez-faire",
+                    "Autocratic",
+                    "Collaborative"
+                ],
+                answer: "Autocratic"
+            },
+            {
+                question: "What is a major downside of an employee joining a trade union?",
+                options: [
+                    "They have to work longer hours.",
+                    "They might be asked to go on strike and lose wages.",
+                    "They lose their job immediately.",
+                    "They are no longer allowed to speak to their manager."
+                ],
+                answer: "They might be asked to go on strike and lose wages."
+            },
+            {
+                question: "The process of negotiating over pay and working conditions between a trade union and an employer is called:",
+                options: [
+                    "Collective bargaining",
+                    "Industrial action",
+                    "Negotiation",
+                    "Productivity negotiation"
+                ],
+                answer: "Collective bargaining"
+            },
+            {
+                question: "What is a **'functional organization'**?",
+                options: [
+                    "An organization that has a very flat structure.",
+                    "An organization where employees work from home.",
+                    "An organization divided into departments based on business activities (e.g., Finance, Marketing).",
+                    "An organization that only produces one type of product."
+                ],
+                answer: "An organization divided into departments based on business activities (e.g., Finance, Marketing)."
+            },
+            {
+                question: "What is a **'chain of command'**?",
+                options: [
+                    "The order in which products are made.",
+                    "The way a business gets its funding.",
+                    "The line of authority from the top manager to the lowest employee.",
+                    "A list of tasks to be completed in a day."
+                ],
+                answer: "The line of authority from the top manager to the lowest employee."
+            },
+            {
+                question: "Which leadership style would be most appropriate for a team of highly skilled and independent graphic designers?",
+                options: [
+                    "Autocratic, to ensure all work is consistent.",
+                    "Democratic, to encourage group decisions.",
+                    "Laissez-faire, to allow them freedom and creativity.",
+                    "Centralized, to maintain strict control."
+                ],
+                answer: "Laissez-faire, to allow them freedom and creativity."
+            },
+            {
+                question: "When would a trade union most likely argue for higher wages for its members?",
+                options: [
+                    "When the firm's profits are low.",
+                    "When the economy is in a recession.",
+                    "When the cost of living (prices) is rising due to inflation.",
+                    "When workers in other firms are getting a lower pay."
+                ],
+                answer: "When the cost of living (prices) is rising due to inflation."
+            },
+            {
+                question: "What is a potential cost of industrial action, such as a strike, for the **employer**?",
+                options: [
+                    "Workers will have less money to spend.",
+                    "Loss of wages for employees.",
+                    "Poor reputation and a loss of output and profit.",
+                    "Customers have to find new suppliers."
+                ],
+                answer: "Poor reputation and a loss of output and profit."
+            },
+            {
+                question: "Explain a key difference between **autocratic** and **democratic** leadership styles.",
+                options: [
+                    "Autocratic leaders ignore employees, while democratic leaders are very strict.",
+                    "Autocratic leaders give employees complete freedom, while democratic leaders give detailed instructions.",
+                    "Autocratic leaders make all decisions alone, while democratic leaders involve employees in decision-making.",
+                    "Autocratic leaders focus on group tasks, while democratic leaders focus on individual tasks."
+                ],
+                answer: "Autocratic leaders make all decisions alone, while democratic leaders involve employees in decision-making."
+            }
+        ];
+
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+
+        // DOM elements
+        const flashcardContainer = document.getElementById('flashcard-container');
+        const flashcard = document.getElementById('flashcard');
+        const questionText = document.getElementById('question-text');
+        const answerText = document.getElementById('answer-text');
+        const controls = document.getElementById('controls');
+        const flipButton = document.getElementById('flip-button');
+        const selfAssessButtons = document.getElementById('self-assess-buttons');
+        const correctButton = document.getElementById('correct-button');
+        const incorrectButton = document.getElementById('incorrect-button');
+        const progressText = document.getElementById('progress-text');
+        const resultScreen = document.getElementById('result-screen');
+        const finalScore = document.getElementById('final-score');
+        const restartButton = document.getElementById('restart-button');
+
+        // Function to shuffle the questions
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to load the current flashcard
+        function loadCard() {
+            if (currentQuestionIndex < questions.length) {
+                const cardData = questions[currentQuestionIndex];
+                questionText.textContent = cardData.question;
+                answerText.textContent = cardData.answer;
+
+                // Reset UI
+                flashcard.classList.remove('flipped');
+                flipButton.style.display = 'block';
+                selfAssessButtons.style.display = 'none';
+                progressText.textContent = `Card ${currentQuestionIndex + 1} of ${questions.length}`;
+            } else {
+                showResults();
+            }
+        }
+
+        // Function to show the final results
+        function showResults() {
+            flashcardContainer.style.display = 'none';
+            resultScreen.style.display = 'block';
+            finalScore.textContent = `You remembered ${correctCount} out of ${questions.length} cards!`;
+        }
+
+        // Event listeners
+        flipButton.addEventListener('click', () => {
+            flashcard.classList.add('flipped');
+            flipButton.style.display = 'none';
+            selfAssessButtons.style.display = 'flex';
+        });
+
+        correctButton.addEventListener('click', () => {
+            correctCount++;
+            currentQuestionIndex++;
+            loadCard();
+        });
+
+        incorrectButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadCard();
+        });
+
+        restartButton.addEventListener('click', () => {
+            questions = shuffle([...quizData]);
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            flashcardContainer.style.display = 'block';
+            resultScreen.style.display = 'none';
+            loadCard();
+        });
+
+        // Initial load
+        window.onload = function() {
+            questions = shuffle([...quizData]);
+            loadCard();
+        };
+    </script>
+</body>
+
+</html>
