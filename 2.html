@@ -1,1 +1,499 @@
-test
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 9 Geography Reviewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        .flashcard {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        .flashcard-face {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
+        .draggable {
+            touch-action: none;
+            cursor: grab;
+        }
+        .dropzone {
+            border: 2px dashed #9ca3af;
+            transition: background-color 0.3s ease;
+        }
+        .dropzone.drag-over {
+            background-color: #dbeafe;
+        }
+        .correct-answer {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+        }
+        .incorrect-answer {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-900">Grade 9 Geography Interactive Reviewer</h1>
+            <p class="text-lg text-slate-600 mt-2">Test your knowledge on Coastal Processes and Ecosystems!</p>
+        </header>
+
+        <!-- Tabs -->
+        <div class="flex justify-center border-b border-slate-300 mb-8" id="tab-container">
+            <button class="tab-button active text-lg font-semibold py-3 px-6 rounded-t-lg" data-tab="game">Coastal Defender Game</button>
+            <button class="tab-button text-lg font-semibold py-3 px-6 rounded-t-lg" data-tab="quiz">Multiple Choice Quiz</button>
+            <button class="tab-button text-lg font-semibold py-3 px-6 rounded-t-lg" data-tab="flashcards">Flashcards</button>
+        </div>
+
+        <!-- Content Area -->
+        <div id="content-area" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg min-h-[600px]">
+            <!-- Game Content -->
+            <div id="game-content" class="tab-content">
+                <h2 class="text-2xl font-bold mb-4 text-blue-600">Game 1: Longshore Drift Challenge</h2>
+                <p class="mb-6 text-slate-600">Drag the labels to their correct positions on the diagram to show how longshore drift works.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                    <div id="labels-container" class="flex flex-row md:flex-col justify-around md:justify-start items-center space-y-0 md:space-y-4">
+                        <!-- Draggable Labels will be injected by JS -->
+                    </div>
+                    <div id="diagram-container" class="md:col-span-2 relative bg-sky-300 w-full h-96 rounded-lg overflow-hidden border-2 border-slate-300">
+                        <!-- Beach area -->
+                        <div class="absolute top-0 left-0 w-full h-1/2 bg-amber-200"></div>
+
+                        <!-- Zig-zag sediment path -->
+                        <svg class="absolute w-full h-full" style="top: 0; left: 0;">
+                             <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" class="fill-current text-slate-600" />
+                                </marker>
+                            </defs>
+                            <!-- Path: Start in sea, swash up, backwash down, swash up, backwash down -->
+                            <polyline points="150,210 220,170 220,210 290,170 290,210" fill="none" stroke="#a0522d" stroke-width="4" stroke-dasharray="8, 8"/>
+                        </svg>
+
+                        <!-- Swash Arrow -->
+                        <svg class="absolute text-slate-600" style="width: 100px; height: 100px; top: 32%; left: 35%; transform: rotate(-45deg);">
+                            <line x1="0" y1="50" x2="80" y2="50" stroke="currentColor" stroke-width="4" marker-end="url(#arrowhead)" />
+                        </svg>
+
+                        <!-- Backwash Arrow -->
+                         <svg class="absolute text-slate-600" style="width: 100px; height: 100px; top: 40%; left: 50%; transform: rotate(90deg);">
+                             <line x1="0" y1="50" x2="80" y2="50" stroke="currentColor" stroke-width="4" marker-end="url(#arrowhead)" />
+                        </svg>
+
+                        <!-- Prevailing Wind Arrow -->
+                         <svg class="absolute text-slate-600" style="width: 150px; height: 100px; bottom: 15%; left: 10%; transform: rotate(-45deg);">
+                             <line x1="0" y1="50" x2="130" y2="50" stroke="currentColor" stroke-width="4" marker-end="url(#arrowhead)" />
+                        </svg>
+
+                        <!-- Direction of Drift Arrow -->
+                         <svg class="absolute text-slate-600" style="width: 250px; height: 50px; top: 10%; left: 30%;">
+                             <line x1="0" y1="25" x2="230" y2="25" stroke="currentColor" stroke-width="4" marker-end="url(#arrowhead)" />
+                         </svg>
+                        
+                        <!-- Drop Zones -->
+                        <div id="dropzone-prevailing-wind" class="dropzone absolute w-32 h-12 rounded" style="bottom: 5%; left: 5%;"></div>
+                        <div id="dropzone-swash" class="dropzone absolute w-24 h-12 rounded" style="top: 20%; left: 30%;"></div>
+                        <div id="dropzone-backwash" class="dropzone absolute w-28 h-12 rounded" style="top: 20%; left: 55%;"></div>
+                        <div id="dropzone-direction" class="dropzone absolute w-48 h-12 rounded" style="top: 5%; left: 35%;"></div>
+                    </div>
+                </div>
+                <button id="reset-game-btn" class="mt-6 bg-amber-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-amber-600 transition-colors">Reset Game</button>
+                <hr class="my-8">
+                 <h2 class="text-2xl font-bold mb-4 text-blue-600">Game 2: Coastal Defender</h2>
+                <p class="mb-6 text-slate-600">Read the scenario and choose the best coastal management strategy to protect the area.</p>
+                <div id="scenario-container" class="bg-slate-50 p-6 rounded-lg">
+                    <!-- Scenario will be injected here -->
+                </div>
+                <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                    <!-- Options will be injected here -->
+                </div>
+                 <div id="feedback-container" class="mt-4 text-lg font-medium p-4 rounded-md hidden"></div>
+            </div>
+
+            <!-- Quiz Content -->
+            <div id="quiz-content" class="tab-content hidden">
+                 <div id="quiz-container" class="max-w-3xl mx-auto">
+                    <div id="question-container" class="mb-6">
+                        <p id="question-counter" class="text-sm text-slate-500"></p>
+                        <p id="question-text" class="text-xl font-semibold my-4"></p>
+                    </div>
+                    <div id="quiz-options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Quiz options will be injected here -->
+                    </div>
+                    <div class="mt-8 flex justify-between items-center">
+                        <button id="next-question-btn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors hidden">Next</button>
+                    </div>
+                </div>
+                <div id="quiz-results-container" class="hidden text-center">
+                    <h2 class="text-3xl font-bold text-slate-800">Quiz Complete!</h2>
+                    <p id="score-text" class="text-2xl mt-4"></p>
+                    <p id="score-feedback" class="text-lg mt-2 text-slate-600"></p>
+                    <button id="restart-quiz-btn" class="mt-8 bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors text-lg">Try Again</button>
+                </div>
+            </div>
+
+            <!-- Flashcards Content -->
+            <div id="flashcards-content" class="tab-content hidden">
+                <div class="flex flex-col items-center">
+                    <div class="w-full max-w-2xl h-80 perspective-1000">
+                        <div id="flashcard" class="flashcard w-full h-full relative">
+                            <div id="flashcard-front" class="flashcard-face absolute w-full h-full bg-blue-500 text-white flex items-center justify-center p-6 rounded-2xl shadow-xl">
+                                <h3 class="text-3xl font-bold text-center"></h3>
+                            </div>
+                            <div id="flashcard-back" class="flashcard-face flashcard-back absolute w-full h-full bg-white text-slate-700 flex items-center justify-center p-6 rounded-2xl shadow-xl border-4 border-blue-500">
+                                <p class="text-xl text-center"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-slate-500">Click the card to flip it!</p>
+                    <div class="flex items-center justify-center mt-6 space-x-4">
+                        <button id="prev-card-btn" class="bg-slate-300 text-slate-800 font-bold py-2 px-5 rounded-lg hover:bg-slate-400 transition-colors">Previous</button>
+                        <p id="card-counter" class="text-lg font-medium"></p>
+                        <button id="next-card-btn" class="bg-slate-300 text-slate-800 font-bold py-2 px-5 rounded-lg hover:bg-slate-400 transition-colors">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tabContainer = document.getElementById('tab-container');
+        const contentArea = document.getElementById('content-area');
+        const tabContents = contentArea.querySelectorAll('.tab-content');
+
+        const quizData = [
+            { question: "Which of the following is NOT a major threat to coral reefs?", options: ["Rising sea temperatures", "Sustainable tourism", "Destructive fishing practices", "Pollution"], answer: "Sustainable tourism" },
+            { question: "What is the primary cause of coral bleaching?", options: ["Overfishing", "Increased sea temperatures", "Sedimentation", "Boat anchors"], answer: "Increased sea temperatures" },
+            { question: "Which process involves waves approaching the coast at an angle and pushing sediment up the beach?", options: ["Backwash", "Longshore Drift", "Swash", "Erosion"], answer: "Swash" },
+            { question: "Groynes are built primarily to...", options: ["Reflect wave energy", "Trap sediment from longshore drift", "Create a habitat for wildlife", "Provide a walkway for tourists"], answer: "Trap sediment from longshore drift" },
+            { question: "An example of a 'soft engineering' coastal management technique is:", options: ["Sea wall", "Rock armour", "Gabions", "Beach nourishment"], answer: "Beach nourishment" },
+            { question: "What is a major threat to mangrove ecosystems mentioned in the documents?", options: ["Afforestation", "Deforestation for urban development", "Strict fishing regulations", "Creation of national parks"], answer: "Deforestation for urban development" },
+            { question: "Which of the following is a key strategy for managing tropical storms?", options: ["Ignoring weather forecasts", "Building close to the sea", "Prediction and early warning systems", "Removing coastal vegetation"], answer: "Prediction and early warning systems" },
+            { question: "What does MPA stand for in the context of coastal management?", options: ["Marine Pollution Act", "Maximum Permitted Anchorage", "Marine Protected Area", "Mangrove Protection Agency"], answer: "Marine Protected Area" },
+            { question: "What happens during the 'backwash' process?", options: ["Water moves up the beach at an angle", "Water returns to the sea at a right angle to the coast", "Sediment is deposited to form a spit", "Waves become larger"], answer: "Water returns to the sea at a right angle to the coast" },
+            { question: "Which statement about hard engineering is generally true?", options: ["It is cheap and looks natural.", "It is often expensive and can be an eyesore.", "It is a short-term solution.", "It always works with natural processes."], answer: "It is often expensive and can be an eyesore." },
+            { question: "The dense roots of mangroves are important because they:", options: ["Produce valuable timber", "Are a primary food source for fish", "Stabilize the shoreline and protect against storms", "Repel all forms of wildlife"], answer: "Stabilize the shoreline and protect against storms" },
+            { question: "What is 'managed retreat'?", options: ["Building new sea walls further inland.", "Allowing low-value land to flood naturally.", "Forcing coastal communities to move.", "A military strategy for coastal defense."], answer: "Allowing low-value land to flood naturally." },
+            { question: "Florida's coastline is particularly vulnerable to erosion because:", options: ["It is composed of hard, resistant rock.", "It is composed of soft sedimentary deposits.", "It experiences very few tropical storms.", "It has a very small population."], answer: "It is composed of soft sedimentary deposits." },
+             { question: "Which feature is an offshore structure built parallel to the shore to reduce wave energy?", options: ["Groyne", "Revetment", "Breakwater", "Sea Wall"], answer: "Breakwater" },
+             { question: "Why are coral reefs often called the 'rainforests of the sea'?", options: ["Because they are located in rainforests.", "Due to their incredible biodiversity.", "Because it rains a lot near them.", "They are made of wood."], answer: "Due to their incredible biodiversity." }
+        ];
+
+        const flashcardData = [
+            { term: "Longshore Drift", definition: "The movement of sediment along a coastline in a zig-zag pattern, caused by waves hitting the beach at an angle." },
+            { term: "Coral Bleaching", definition: "The process where corals expel the algae living in their tissues due to stress, primarily from high sea temperatures, causing them to turn white." },
+            { term: "MPA (Marine Protected Area)", definition: "A designated area of the ocean where human activities are more strictly regulated than the surrounding waters to protect natural or cultural resources." },
+            { term: "Hard Engineering", definition: "Man-made structures used to control coastal processes, often expensive and visually intrusive (e.g., sea walls, groynes)." },
+            { term: "Soft Engineering", definition: "Working with natural processes to manage the coast, often more sustainable and less expensive (e.g., beach nourishment, managed retreat)." },
+            { term: "Swash", definition: "The movement of water up the beach after a wave breaks, occurring at the angle of the prevailing wind." },
+            { term: "Backwash", definition: "The movement of water back down the beach to the sea, occurring at a right angle to the coastline due to gravity." },
+            { term: "Groynes", definition: "Wooden or stone fences built at right angles to the coast to trap beach material being moved by longshore drift." },
+            { term: "Sea Wall", definition: "A structure, often made of concrete, built along the coastline to protect the land behind it from erosion and flooding." },
+            { term: "Beach Nourishment", definition: "The process of adding sand or sediment to a beach to replace material lost through erosion." },
+             { term: "Mangroves", definition: "Salt-tolerant trees and shrubs that grow in coastal brackish water, forming important ecosystems that protect the shoreline." },
+             { term: "Gabions", definition: "Wire cages filled with rocks that can be placed at the foot of cliffs to absorb wave energy." }
+        ];
+
+         const gameScenarios = [
+            { scenario: "A high-value coastal town with expensive hotels and homes is facing severe erosion from powerful storm waves.", options: ["Managed Retreat", "Sea Wall", "Beach Nourishment"], answer: "Sea Wall", feedback: "Correct! A Sea Wall is a strong, effective (though expensive) hard engineering solution needed to protect high-value infrastructure from powerful waves." },
+            { scenario: "A popular tourist beach is becoming narrow because longshore drift is carrying all the sand away.", options: ["Groynes", "Sea Wall", "Managed Retreat"], answer: "Groynes", feedback: "Excellent! Groynes are designed specifically to trap sediment transported by longshore drift, making the beach wider and more attractive to tourists." },
+            { scenario: "An undeveloped, natural coastline with important salt marsh habitats is eroding, but there's no human infrastructure to protect.", options: ["Rock Armour", "Sea Wall", "Managed Retreat"], answer: "Managed Retreat", feedback: "That's right! Managed Retreat is a sustainable, soft engineering approach where low-value land is allowed to erode and flood, creating valuable natural habitats." },
+            { scenario: "The base of a soft cliff is being undercut by waves, but building a massive concrete wall is considered too ugly for the scenic area.", options: ["Groynes", "Rock Armour / Rip-Rap", "Beach Nourishment"], answer: "Rock Armour / Rip-Rap", feedback: "Good choice! Rock Armour absorbs wave energy effectively to protect the cliff base and can look more natural than a concrete sea wall in a scenic location." }
+        ];
+
+        // --- Fisher-Yates Shuffle Algorithm ---
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // --- Tabbing Logic ---
+        tabContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tab-button')) {
+                const targetTab = e.target.dataset.tab;
+
+                tabContainer.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+
+                tabContents.forEach(content => {
+                    if (content.id === `${targetTab}-content`) {
+                        content.classList.remove('hidden');
+                    } else {
+                        content.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // --- Game Logic ---
+        const labelsContainer = document.getElementById('labels-container');
+        const diagramContainer = document.getElementById('diagram-container');
+        const dropzones = diagramContainer.querySelectorAll('.dropzone');
+        const resetGameBtn = document.getElementById('reset-game-btn');
+        let draggedItem = null;
+
+        const gameLabels = {
+            'dropzone-prevailing-wind': 'Prevailing Wind',
+            'dropzone-swash': 'Swash',
+            'dropzone-backwash': 'Backwash',
+            'dropzone-direction': 'Direction of Drift'
+        };
+
+        function initializeGame() {
+            labelsContainer.innerHTML = '';
+            Object.values(gameLabels).forEach(label => {
+                const div = document.createElement('div');
+                div.textContent = label;
+                div.className = 'draggable bg-white p-3 rounded-lg shadow-md border-2 border-slate-300 font-semibold';
+                div.draggable = true;
+                labelsContainer.appendChild(div);
+            });
+            
+            dropzones.forEach(dz => {
+                dz.innerHTML = '';
+                dz.classList.remove('bg-green-200', 'border-green-500');
+            });
+
+            addDragListeners();
+        }
+
+        function addDragListeners() {
+            const draggables = labelsContainer.querySelectorAll('.draggable');
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', (e) => {
+                    draggedItem = e.target;
+                    setTimeout(() => e.target.style.display = 'none', 0);
+                });
+                draggable.addEventListener('dragend', () => {
+                    setTimeout(() => {
+                        draggedItem.style.display = 'block';
+                        draggedItem = null;
+                    }, 0);
+                });
+            });
+
+            dropzones.forEach(dropzone => {
+                dropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.add('drag-over');
+                });
+                dropzone.addEventListener('dragleave', (e) => {
+                     e.currentTarget.classList.remove('drag-over');
+                });
+                dropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove('drag-over');
+                    if (draggedItem && gameLabels[e.currentTarget.id] === draggedItem.textContent) {
+                        e.currentTarget.innerHTML = '';
+                        e.currentTarget.appendChild(draggedItem);
+                        draggedItem.style.cursor = 'default';
+                        draggedItem.draggable = false;
+                        e.currentTarget.classList.add('bg-green-200', 'border-green-500');
+                    }
+                });
+            });
+        }
+        
+        resetGameBtn.addEventListener('click', initializeGame);
+        
+        // Game 2: Coastal Defender Logic
+        const scenarioContainer = document.getElementById('scenario-container');
+        const g2optionsContainer = document.getElementById('options-container');
+        const feedbackContainer = document.getElementById('feedback-container');
+        let currentScenarioIndex = 0;
+
+        function loadScenario(index) {
+            const scenario = gameScenarios[index];
+            scenarioContainer.innerHTML = `<p class="text-xl font-medium">${scenario.scenario}</p>`;
+            g2optionsContainer.innerHTML = '';
+            feedbackContainer.classList.add('hidden');
+
+            scenario.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = 'w-full p-4 bg-white border-2 border-slate-300 rounded-lg text-lg hover:bg-slate-200 transition-colors';
+                button.addEventListener('click', () => checkScenarioAnswer(option, scenario));
+                g2optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkScenarioAnswer(selectedOption, scenario) {
+            feedbackContainer.textContent = scenario.feedback;
+            feedbackContainer.classList.remove('hidden');
+            if (selectedOption === scenario.answer) {
+                feedbackContainer.classList.remove('bg-red-200', 'text-red-800');
+                feedbackContainer.classList.add('bg-green-200', 'text-green-800');
+            } else {
+                 feedbackContainer.classList.remove('bg-green-200', 'text-green-800');
+                 feedbackContainer.classList.add('bg-red-200', 'text-red-800');
+                 feedbackContainer.textContent = `Not quite. ${scenario.feedback}`;
+            }
+
+            // Move to next scenario after a delay
+            setTimeout(() => {
+                currentScenarioIndex = (currentScenarioIndex + 1) % gameScenarios.length;
+                loadScenario(currentScenarioIndex);
+            }, 4000);
+        }
+
+        // --- Quiz Logic ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionCounter = document.getElementById('question-counter');
+        const questionText = document.getElementById('question-text');
+        const quizOptionsContainer = document.getElementById('quiz-options-container');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+        const quizContainer = document.getElementById('quiz-container');
+        const quizResultsContainer = document.getElementById('quiz-results-container');
+        const scoreText = document.getElementById('score-text');
+        const scoreFeedback = document.getElementById('score-feedback');
+        const restartQuizBtn = document.getElementById('restart-quiz-btn');
+
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+            questionText.textContent = currentQuestion.question;
+            quizOptionsContainer.innerHTML = "";
+            nextQuestionBtn.classList.add('hidden');
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.classList.add('p-4', 'border-2', 'rounded-lg', 'text-left', 'hover:bg-slate-100', 'transition-colors');
+                button.addEventListener('click', selectAnswer);
+                quizOptionsContainer.appendChild(button);
+            });
+        }
+
+        function selectAnswer(e) {
+            const selectedButton = e.target;
+            const correct = selectedButton.innerText === quizData[currentQuestionIndex].answer;
+            if (correct) {
+                score++;
+            }
+            
+            Array.from(quizOptionsContainer.children).forEach(button => {
+                if (button.innerText === quizData[currentQuestionIndex].answer) {
+                    button.classList.add('correct-answer');
+                } else {
+                    button.classList.add('incorrect-answer');
+                }
+                button.disabled = true;
+            });
+
+            if (currentQuestionIndex < quizData.length -1) {
+                nextQuestionBtn.classList.remove('hidden');
+            } else {
+                 showResults();
+            }
+        }
+
+        function showResults() {
+             quizContainer.classList.add('hidden');
+             quizResultsContainer.classList.remove('hidden');
+             scoreText.textContent = `Your Score: ${score} out of ${quizData.length}`;
+             let feedback = "";
+             const percentage = (score / quizData.length) * 100;
+             if (percentage === 100) feedback = "Perfect! You're a geography expert!";
+             else if (percentage >= 80) feedback = "Excellent work! You really know your stuff.";
+             else if (percentage >= 60) feedback = "Good job! A little more review and you'll be an expert.";
+             else feedback = "Keep studying! You'll get there.";
+             scoreFeedback.textContent = feedback;
+        }
+
+        nextQuestionBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        restartQuizBtn.addEventListener('click', () => {
+             shuffleArray(quizData); // Re-shuffle for a new attempt
+             currentQuestionIndex = 0;
+             score = 0;
+             quizContainer.classList.remove('hidden');
+             quizResultsContainer.classList.add('hidden');
+             loadQuestion();
+        });
+
+        // --- Flashcards Logic ---
+        let currentCardIndex = 0;
+        const flashcard = document.getElementById('flashcard');
+        const flashcardFront = document.getElementById('flashcard-front').querySelector('h3');
+        const flashcardBack = document.getElementById('flashcard-back').querySelector('p');
+        const cardCounter = document.getElementById('card-counter');
+        const prevCardBtn = document.getElementById('prev-card-btn');
+        const nextCardBtn = document.getElementById('next-card-btn');
+
+        function loadCard() {
+            flashcard.classList.remove('flipped');
+            setTimeout(() => {
+                flashcardFront.textContent = flashcardData[currentCardIndex].term;
+                flashcardBack.textContent = flashcardData[currentCardIndex].definition;
+                cardCounter.textContent = `${currentCardIndex + 1} / ${flashcardData.length}`;
+            }, 200); // Wait for flip back animation
+        }
+
+        flashcard.addEventListener('click', () => {
+            flashcard.classList.toggle('flipped');
+        });
+
+        prevCardBtn.addEventListener('click', () => {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                loadCard();
+            }
+        });
+
+        nextCardBtn.addEventListener('click', () => {
+            if (currentCardIndex < flashcardData.length - 1) {
+                currentCardIndex++;
+                loadCard();
+            }
+        });
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            shuffleArray(quizData);
+            shuffleArray(flashcardData);
+            shuffleArray(gameScenarios);
+            
+            initializeGame();
+            loadScenario(currentScenarioIndex);
+            loadQuestion();
+            loadCard();
+        });
+    </script>
+</body>
+</html>
+
+
+
+
