@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambridge Geography Reviewer: Population & Settlement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .option-btn { transition: all 0.2s; }
+        .option-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .option-btn:active { transform: translateY(0); }
+        .blank-space { display: inline-block; min-width: 100px; border-bottom: 2px solid #2563eb; padding: 0 5px; text-align: center; font-weight: bold; color: #2563eb; transition: all 0.3s; }
+        .blank-filled { background-color: #dbeafe; border-bottom-color: transparent; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-blue-900 text-white shadow-lg">
+        <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-earth-americas text-2xl text-blue-300"></i>
+                <div>
+                    <h1 class="text-lg font-bold leading-tight">Cambridge Geography Review</h1>
+                    <p class="text-xs text-blue-200">Population & Settlement (Theme 1)</p>
+                </div>
+            </div>
+            <div class="hidden sm:block text-right">
+                <div class="text-xs font-semibold uppercase tracking-wider text-blue-300">Exam Officer</div>
+                <div class="text-sm">Pastoral Care Support</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="w-full max-w-2xl bg-white rounded-xl shadow-xl overflow-hidden min-h-[500px] flex flex-col relative">
+            
+            <!-- Start Screen -->
+            <div id="start-screen" class="absolute inset-0 p-8 flex flex-col items-center justify-center text-center z-10 bg-white">
+                <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-6 text-blue-600">
+                    <i class="fa-solid fa-user-graduate text-4xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-slate-800 mb-4">Ready to Review?</h2>
+                <p class="text-slate-600 mb-8 max-w-md">
+                    Welcome! As your Exam Officer, I've prepared a comprehensive review session covering <strong>Population Density</strong>, <strong>Distribution</strong>, and the <strong>Japan & Namibia Case Studies</strong>.
+                </p>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8 text-sm text-yellow-800 max-w-md text-left">
+                    <p class="font-bold mb-1"><i class="fa-solid fa-book-open mr-2"></i>Open Book Instructions:</p>
+                    <p>Keep your source images open. This session includes <strong>Fill in the Blanks</strong>, <strong>Multiple Choice</strong>, and <strong>Short Explanation</strong> questions.</p>
+                </div>
+                <button onclick="startQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition-colors flex items-center gap-2 text-lg">
+                    Start Review <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quiz-screen" class="hidden flex-col h-full fade-in">
+                <!-- Progress Bar -->
+                <div class="bg-slate-100 h-2 w-full">
+                    <div id="progress-bar" class="bg-blue-500 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+
+                <!-- Question Area -->
+                <div class="p-6 sm:p-8 flex-grow overflow-y-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <span id="question-counter" class="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2 py-1 rounded">Question 1 / 18</span>
+                        <span id="score-display" class="text-sm font-semibold text-slate-500">Score: 0</span>
+                    </div>
+
+                    <!-- Question Text -->
+                    <h3 id="question-text" class="text-xl font-bold text-slate-800 mb-6 leading-snug">
+                        <!-- Question text goes here -->
+                    </h3>
+
+                    <!-- Hint Section -->
+                    <div class="mb-6">
+                        <button onclick="toggleHint()" class="text-sm text-blue-500 hover:text-blue-700 flex items-center gap-1 focus:outline-none">
+                            <i class="fa-regular fa-lightbulb"></i> Need a hint?
+                        </button>
+                        <div id="hint-text" class="hidden mt-2 p-3 bg-blue-50 text-blue-800 text-sm rounded-lg border border-blue-100 italic">
+                            <!-- Hint content -->
+                        </div>
+                    </div>
+
+                    <!-- Options Grid (MCQ & Fill in Blank Word Bank) -->
+                    <div id="options-container" class="grid gap-3"></div>
+
+                    <!-- Text Input Area (for Explanation Questions) -->
+                    <div id="text-input-container" class="hidden flex-col gap-4">
+                        <textarea id="student-answer" rows="4" class="w-full p-3 border-2 border-slate-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-200 outline-none resize-none" placeholder="Type your explanation here..."></textarea>
+                        <button onclick="revealModelAnswer()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors self-start">
+                            Reveal Model Answer
+                        </button>
+                    </div>
+
+                    <!-- Feedback Area -->
+                    <div id="feedback-area" class="hidden mt-6 p-4 rounded-lg border fade-in">
+                        <div class="flex items-start gap-3">
+                            <div id="feedback-icon" class="mt-1 text-xl"></div>
+                            <div class="w-full">
+                                <h4 id="feedback-title" class="font-bold mb-1"></h4>
+                                <div id="feedback-content" class="text-sm"></div>
+                                
+                                <!-- Self Marking Buttons (Only for text questions) -->
+                                <div id="self-marking-btns" class="hidden mt-4 pt-4 border-t border-slate-200 flex gap-3">
+                                    <p class="text-xs text-slate-500 w-full mb-2 block sm:hidden">Did you get it right?</p>
+                                    <div class="flex items-center gap-2 w-full">
+                                        <span class="text-xs font-bold text-slate-500 hidden sm:block mr-2">DID YOU GET IT RIGHT?</span>
+                                        <button onclick="markSelf(true)" class="flex-1 bg-green-100 text-green-700 hover:bg-green-200 py-2 px-4 rounded text-sm font-bold">
+                                            <i class="fa-solid fa-check mr-1"></i> Yes
+                                        </button>
+                                        <button onclick="markSelf(false)" class="flex-1 bg-red-100 text-red-700 hover:bg-red-200 py-2 px-4 rounded text-sm font-bold">
+                                            <i class="fa-solid fa-xmark mr-1"></i> No
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="next-btn" onclick="nextQuestion()" class="mt-4 bg-slate-800 hover:bg-slate-900 text-white py-2 px-6 rounded-lg text-sm font-semibold transition-colors hidden">
+                            Next Question <i class="fa-solid fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="results-screen" class="hidden absolute inset-0 p-8 flex flex-col items-center justify-center text-center z-10 bg-white fade-in">
+                <div id="result-icon-container" class="w-24 h-24 rounded-full flex items-center justify-center mb-6 text-5xl shadow-inner">
+                    <!-- Icon injected by JS -->
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Review Complete!</h2>
+                <p class="text-slate-500 mb-6">You scored <span id="final-score" class="font-bold text-slate-800 text-xl">0</span> out of <span id="total-questions" class="font-bold text-slate-800 text-xl">18</span></p>
+                
+                <div id="result-message" class="bg-slate-50 p-6 rounded-xl border border-slate-200 max-w-md mb-8 text-slate-700">
+                    <!-- Dynamic message -->
+                </div>
+
+                <button onclick="restartQuiz()" class="text-blue-600 font-semibold hover:text-blue-800 flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Review Again
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+        <div class="max-w-3xl mx-auto px-4 text-center text-xs text-slate-400">
+            <p>Cambridge IGCSE Geography Review • Designed by your Exam Officer</p>
+        </div>
+    </footer>
+
+    <script>
+        // Quiz Data
+        const quizData = [
+            // --- FILL IN THE BLANKS (CONVERTED) ---
+            {
+                type: 'fill',
+                question: "Refer to Source A. Complete the formula for calculating Population Density.",
+                sentence: "Population Density = Total Population ÷ <span id='blank-space' class='blank-space'>__________</span>",
+                options: [
+                    { text: "Total Land Area", correct: true, rationale: "Correct. Density calculates the average number of people per unit of area (people per km²)." },
+                    { text: "Birth Rate", correct: false, rationale: "Birth rate is about population growth, not density." },
+                    { text: "Migration", correct: false, rationale: "Migration is part of population change, not the density formula." },
+                    { text: "GNP", correct: false, rationale: "GNP is an economic measure." }
+                ],
+                hint: "Think: You want to find out how many people fit into ONE square kilometer."
+            },
+            {
+                type: 'fill',
+                question: "Refer to Source E (Factors). Complete the definition.",
+                sentence: "'Alluvial' refers to fertile soil deposited by <span id='blank-space' class='blank-space'>__________</span> or floods.",
+                options: [
+                    { text: "Rivers", correct: true, rationale: "Correct. Alluvial plains are created by river deposits (silt) and are excellent for farming." },
+                    { text: "Glaciers", correct: false, rationale: "Glaciers usually leave rocky, infertile deposits called moraine." },
+                    { text: "Wind", correct: false, rationale: "Wind deposits are often called loess or dunes." },
+                    { text: "Volcanoes", correct: false, rationale: "Volcanoes deposit ash and lava." }
+                ],
+                hint: "These plains are usually found in valleys and floodplains."
+            },
+            {
+                type: 'fill',
+                question: "Refer to Namibia Source C. Complete the description of the climate.",
+                sentence: "Rainfall in Namibia is described as 'erratic', which means it is irregular and <span id='blank-space' class='blank-space'>__________</span>.",
+                options: [
+                    { text: "Unpredictable", correct: true, rationale: "Correct. In arid climates, you cannot rely on when the rain will fall." },
+                    { text: "Constant", correct: false, rationale: "Erratic is the opposite of constant." },
+                    { text: "Heavy", correct: false, rationale: "Namibia is arid, so rainfall is generally light." },
+                    { text: "Seasonal", correct: false, rationale: "While it may be seasonal, 'erratic' specifically emphasizes the lack of reliability." }
+                ],
+                hint: "If something is erratic, you never know for sure when it is going to happen."
+            },
+            {
+                type: 'fill',
+                question: "Refer to Source E. Complete the definition.",
+                sentence: "A 'Pull Factor' is a positive feature that <span id='blank-space' class='blank-space'>__________</span> people to move to a new location.",
+                options: [
+                    { text: "Attracts", correct: true, rationale: "Correct. Pull factors (like jobs or safety) pull or attract people towards them." },
+                    { text: "Forces", correct: false, rationale: "Force is usually associated with Push factors (like war)." },
+                    { text: "Discourages", correct: false, rationale: "Discouraging factors are Push factors." },
+                    { text: "Prevents", correct: false, rationale: "Prevents implies a barrier." }
+                ],
+                hint: "Think of a magnet pulling you towards something good."
+            },
+            {
+                type: 'fill',
+                question: "General Geography Term (Japan Source C). Complete the definition.",
+                sentence: "The term 'Relief' refers to the shape and <span id='blank-space' class='blank-space'>__________</span> of the land.",
+                options: [
+                    { text: "Height", correct: true, rationale: "Correct. Relief describes the topography, specifically elevation and slope." },
+                    { text: "Cost", correct: false, rationale: "Cost is an economic factor." },
+                    { text: "Population", correct: false, rationale: "Population is human geography, relief is physical." },
+                    { text: "Climate", correct: false, rationale: "Climate refers to weather patterns, not the land shape." }
+                ],
+                hint: "If a map shows mountains (high) and plains (low), it shows relief."
+            },
+
+            // --- MULTIPLE CHOICE QUESTIONS (Remaining) ---
+            {
+                type: 'mcq',
+                question: "Refer to the 'Population Density' definition (left of Source A). Which statement correctly distinguishes 'Population Density' from 'Population Distribution'?",
+                options: [
+                    { text: "Density is the pattern of where people live; Distribution is the math.", correct: false, rationale: "This reverses the definitions found in the text." },
+                    { text: "Density is the average number of people per km²; Distribution is the pattern of where people live.", correct: true, rationale: "Correct. The text explicitly defines Density as the average number (math) and Distribution as the way they are spread out (pattern)." },
+                    { text: "Density only applies to cities; Distribution applies to the world.", correct: false, rationale: "The text does not make this distinction." },
+                    { text: "They mean exactly the same thing.", correct: false, rationale: "They are distinct geographical concepts." }
+                ],
+                hint: "Look for the words 'average number' vs 'pattern'."
+            },
+            {
+                type: 'mcq',
+                question: "Refer to Japan Source B (Density Map & Table). According to the table below the map, which island has the highest total population?",
+                options: [
+                    { text: "Hokkaido", correct: false, rationale: "Hokkaido has a population of 5.4 million." },
+                    { text: "Honshu", correct: true, rationale: "Correct. According to the table in Source B, Honshu has 98,352,000 people." },
+                    { text: "Kyushu", correct: false, rationale: "Kyushu has 13.2 million people." },
+                    { text: "Shikoku", correct: false, rationale: "Shikoku has the smallest population of the main islands (4.2m)." }
+                ],
+                hint: "Check the table at the bottom of Source B under the 'Population' column."
+            },
+            {
+                type: 'mcq',
+                question: "Refer to Namibia Source C (Text). What economic activity does 'half of the population depend on'?",
+                options: [
+                    { text: "Diamond mining", correct: false, rationale: "Mining is important for the economy but employs few people." },
+                    { text: "Subsistence agriculture", correct: true, rationale: "Correct. The text states: 'About half of the population depends on subsistence agriculture.'"},
+                    { text: "Tourism", correct: false, rationale: "Tourism is not mentioned as the primary livelihood for half the population." },
+                    { text: "Manufacturing", correct: false, rationale: "Namibia's economy is described as dependent on mining, not factory work." }
+                ],
+                hint: "Look for the sentence starting with 'About half of the population...'"
+            },
+            {
+                type: 'mcq',
+                question: "Refer to Source E (Factors influencing where people live). Which of the following is categorized as a PHYSICAL Pull Factor?",
+                options: [
+                    { text: "Good communications", correct: false, rationale: "This is a Human/Economic factor." },
+                    { text: "Reliable water supplies", correct: true, rationale: "Correct. Water is a physical/natural necessity listed in the diagram." },
+                    { text: "Employment", correct: false, rationale: "Jobs are a Human factor." },
+                    { text: "High-tech industry", correct: false, rationale: "Industry is a human construct." }
+                ],
+                hint: "Physical factors are natural (not man-made)."
+            },
+            {
+                type: 'mcq',
+                question: "Refer to Namibia Source B (Climate Graph). Why does the red temperature line dip in June/July?",
+                options: [
+                    { text: "It is the rainy season.", correct: false, rationale: "The blue bars show zero rain in June/July." },
+                    { text: "It is winter in the Southern Hemisphere.", correct: true, rationale: "Correct. Namibia is south of the equator, so June/July is their winter." },
+                    { text: "It is night time.", correct: false, rationale: "Climate graphs show monthly averages, not daily cycles." },
+                    { text: "The sensors were broken.", correct: false, rationale: "The graph shows a standard seasonal curve." }
+                ],
+                hint: "Namibia is in the Southern Hemisphere."
+            },
+            {
+                type: 'mcq',
+                question: "Refer to Japan Source E (Text: Where do people live in Japan?). Why are 'High-density rural areas' crowded despite being rural?",
+                options: [
+                    { text: "Because of flat valley floors and fertile soil suitable for crops.", correct: true, rationale: "Correct. The text explains that flat valleys + fertile soil = high density." },
+                    { text: "Because they are near the tops of mountains.", correct: false, rationale: "The text says mountains are 'Low-density rural areas'." },
+                    { text: "Because of cheap rent.", correct: false, rationale: "The text focuses on physical factors like soil and relief." },
+                    { text: "Because they are close to nuclear power plants.", correct: false, rationale: "Not mentioned in the text." }
+                ],
+                hint: "Farmers need good dirt and flat land."
+            },
+            {
+                type: 'mcq',
+                question: "Refer to Japan Source D (Green Box: Land reclamation). How did the city of Kobe solve the shortage of flat land?",
+                options: [
+                    { text: "They built underwater cities.", correct: false, rationale: "Incorrect." },
+                    { text: "They used land reclamation (filling the sea with soil from mountains).", correct: true, rationale: "Correct. They moved soil from the Rokko Mountains to the sea." },
+                    { text: "They stopped people from moving there.", correct: false, rationale: "The text describes expansion, not restriction." },
+                    { text: "They built skyscrapers on top of the mountains.", correct: false, rationale: "The text describes cutting the mountains down, not building on top of them." }
+                ],
+                hint: "Look for the word 'Reclamation' or 'Port Island'."
+            },
+            {
+                type: 'mcq',
+                question: "Refer to Source D (Photo of Tröllaskagi, Iceland). Why is the population density low in the Iceland photo compared to Source C (Shanghai)?",
+                options: [
+                    { text: "It has a temperate climate.", correct: false, rationale: "Iceland has a harsh, cold climate." },
+                    { text: "Steep relief, glaciers, and isolation act as Push Factors.", correct: true, rationale: "Correct. The photo shows mountains and snow, which discourage settlement." },
+                    { text: "It is too crowded with tourists.", correct: false, rationale: "The question asks about population density, which is low due to physical factors." },
+                    { text: "The soil is too fertile.", correct: false, rationale: "Fertile soil would be a Pull factor (attracting people), not a Push factor." }
+                ],
+                hint: "Look at the mountains and snow in the bottom photo."
+            },
+            {
+                type: 'mcq',
+                question: "Refer to Namibia Source A (Map & Red Table). Which region has the HIGHEST population density?",
+                options: [
+                    { text: "Ohangwena (21.3)", correct: true, rationale: "Correct. 21.3 is the highest number in the table." },
+                    { text: "Karas (0.4)", correct: false, rationale: "0.4 is the lowest density." },
+                    { text: "Khomas (9.2)", correct: false, rationale: "High, but not the highest." },
+                    { text: "Oshana (20.4)", correct: false, rationale: "Very close, but Ohangwena (21.3) is higher." }
+                ],
+                hint: "Check the red list on the right side of the image."
+            },
+            {
+                type: 'mcq',
+                question: "Refer to Japan Source B (Density) and Source C (Relief). What is the main conclusion when you compare these two maps?",
+                options: [
+                    { text: "Population is evenly distributed.", correct: false, rationale: "Map B shows red clusters and empty white spaces—it is very uneven." },
+                    { text: "Relief controls density: People live in flat green areas and avoid the brown mountains.", correct: true, rationale: "Correct. The high density (red) matches the flat land (green)." },
+                    { text: "People prefer living in the mountains in Japan.", correct: false, rationale: "The maps show the mountains (brown) are empty (white/yellow)." },
+                    { text: "There is no correlation between land height and population.", correct: false, rationale: "The visual evidence shows a very strong correlation." }
+                ],
+                hint: "Do the Red areas in Map B match the Brown or Green areas in Map C?"
+            },
+
+            // --- EXPLANATION QUESTIONS ---
+            {
+                type: 'text',
+                question: "Refer to Source E (Factors). Explain TWO physical factors that would result in a low population density in an area.",
+                rationale: "<strong>Model Answer:</strong><br>1. <strong>Relief:</strong> Steep slopes (mountains) make it difficult to build settlements and roads.<br>2. <strong>Climate:</strong> Arid (dry) climates lack water for survival and farming, while extremely cold climates make agriculture impossible.",
+                hint: "Think about 'Push Factors' related to the land and the weather."
+            },
+            {
+                type: 'text',
+                question: "Refer to the Japan Case Study (Sources B & D). Explain why the population is heavily concentrated on the coastal lowlands of Honshu.",
+                rationale: "<strong>Model Answer:</strong><br>The center of Japan is dominated by steep mountains (Japanese Alps), making settlement difficult. The coastal lowlands offer flat land which is essential for:<br>- Building large cities and factories (Industry).<br>- Agriculture (fertile soil).<br>- Ports and trade access.",
+                hint: "Consider what the center of the island looks like versus the edge."
+            },
+            {
+                type: 'text',
+                question: "Refer to the Namibia Case Study (Sources A & C). Explain why the population density in the Karas region is significantly lower than in the Ohangwena region.",
+                rationale: "<strong>Model Answer:</strong><br><strong>Karas (South):</strong> Has an extremely arid climate with erratic rainfall (Source B), making the subsistence farming that half the population relies on nearly impossible.<br><strong>Ohangwena (North):</strong> Receives more reliable rainfall, allowing for better agricultural productivity and thus supporting a higher population density.",
+                hint: "Compare the ability to grow food in the North vs the South."
+            }
+        ];
+
+        // State
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let shuffledQuestions = [];
+
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const textInputContainer = document.getElementById('text-input-container');
+        const studentAnswer = document.getElementById('student-answer');
+        const feedbackArea = document.getElementById('feedback-area');
+        const progressBar = document.getElementById('progress-bar');
+        const counterText = document.getElementById('question-counter');
+        const scoreDisplay = document.getElementById('score-display');
+        const hintBtn = document.querySelector('button[onclick="toggleHint()"]');
+        const hintText = document.getElementById('hint-text');
+        const nextBtn = document.getElementById('next-btn');
+        const selfMarkingBtns = document.getElementById('self-marking-btns');
+
+        // Utilities
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Functions
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            quizScreen.classList.add('flex');
+
+            // Create a shuffled copy of questions
+            shuffledQuestions = shuffleArray([...quizData]);
+
+            // Shuffle options for MCQ and Fill questions
+            shuffledQuestions.forEach(q => {
+                if (q.type === 'mcq' || q.type === 'fill') {
+                    q.options = shuffleArray([...q.options]);
+                }
+            });
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = shuffledQuestions[currentQuestionIndex];
+            
+            // Reset UI
+            feedbackArea.classList.add('hidden');
+            hintText.classList.add('hidden');
+            selfMarkingBtns.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            studentAnswer.value = ''; 
+            
+            // Check if fill type to render sentence instead of question prompt
+            if (q.type === 'fill') {
+                questionText.innerHTML = `<div class="text-sm text-slate-500 mb-2 font-normal uppercase tracking-wider">${q.question}</div>` + highlightKeywords(q.sentence);
+            } else {
+                questionText.innerHTML = highlightKeywords(q.question);
+            }
+
+            counterText.textContent = `Question ${currentQuestionIndex + 1} / ${shuffledQuestions.length}`;
+            scoreDisplay.textContent = `Score: ${score}`;
+            
+            // Update Progress Bar
+            const progress = ((currentQuestionIndex) / shuffledQuestions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            // Hint
+            hintText.innerText = q.hint;
+
+            if (q.type === 'mcq' || q.type === 'fill') {
+                // Setup MCQ/Fill Mode
+                optionsContainer.classList.remove('hidden');
+                textInputContainer.classList.add('hidden');
+                optionsContainer.innerHTML = '';
+
+                const isWordBank = q.type === 'fill';
+                
+                // For fill in blanks, maybe use a grid layout for word bank?
+                if (isWordBank) optionsContainer.className = "grid grid-cols-2 gap-3";
+                else optionsContainer.className = "grid gap-3";
+
+                q.options.forEach((opt, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = "option-btn w-full text-left p-4 rounded-lg border-2 border-slate-200 bg-white text-slate-700 font-medium hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300 flex items-center justify-center";
+                    
+                    // If word bank, center text and maybe styling
+                    if (isWordBank) {
+                        btn.className = "option-btn w-full text-center p-3 rounded-lg border-2 border-blue-100 bg-blue-50 text-blue-700 font-bold hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300";
+                    } else {
+                         btn.classList.remove('items-center', 'justify-center'); // Standard left align for normal MCQ
+                    }
+
+                    btn.innerText = opt.text;
+                    btn.onclick = () => handleSelectionAnswer(btn, opt, q.type);
+                    optionsContainer.appendChild(btn);
+                });
+            } else if (q.type === 'text') {
+                // Setup Text Explanation Mode
+                optionsContainer.className = "grid gap-3"; // Reset grid
+                optionsContainer.classList.add('hidden');
+                textInputContainer.classList.remove('hidden');
+                textInputContainer.classList.add('flex');
+            }
+        }
+
+        function highlightKeywords(text) {
+            return text.replace(/(Source [A-Z])/g, '<span class="text-blue-600 font-extrabold">$1</span>')
+                       .replace(/(screenshot)/gi, 'source')
+                       .replace(/(Explain|Compare)/g, '<span class="underline decoration-blue-400 decoration-2">$1</span>');
+        }
+
+        function toggleHint() {
+            hintText.classList.toggle('hidden');
+        }
+
+        // Handle Selection (MCQ & Fill)
+        function handleSelectionAnswer(btn, option, type) {
+            const allBtns = optionsContainer.querySelectorAll('button');
+            allBtns.forEach(b => {
+                b.disabled = true;
+                b.classList.add('opacity-70', 'cursor-not-allowed');
+                b.classList.remove('hover:border-blue-400', 'option-btn');
+            });
+
+            // Visual update for Fill-in-Blank
+            if (type === 'fill') {
+                const blank = document.getElementById('blank-space');
+                if (blank) {
+                    blank.innerText = option.text;
+                    blank.classList.add('blank-filled');
+                    if(option.correct) blank.classList.add('text-green-700', 'bg-green-100');
+                    else blank.classList.add('text-red-700', 'bg-red-100', 'line-through');
+                }
+            }
+
+            feedbackArea.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+            nextBtn.classList.add('inline-flex');
+            
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackContent = document.getElementById('feedback-content');
+            const feedbackIcon = document.getElementById('feedback-icon');
+
+            if (option.correct) {
+                score++;
+                btn.classList.remove('border-slate-200', 'bg-white', 'text-slate-700', 'border-blue-100', 'bg-blue-50', 'text-blue-700');
+                btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                
+                feedbackArea.className = "mt-6 p-4 rounded-lg border border-green-200 bg-green-50 fade-in";
+                feedbackTitle.className = "font-bold mb-1 text-green-800";
+                feedbackTitle.innerText = "Excellent!";
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-circle-check text-green-600"></i>';
+                feedbackContent.className = "text-sm text-green-700";
+            } else {
+                btn.classList.remove('border-slate-200', 'bg-white', 'text-slate-700', 'border-blue-100', 'bg-blue-50', 'text-blue-700');
+                btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                
+                feedbackArea.className = "mt-6 p-4 rounded-lg border border-red-200 bg-red-50 fade-in";
+                feedbackTitle.className = "font-bold mb-1 text-red-800";
+                feedbackTitle.innerText = "Not quite.";
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-600"></i>';
+                feedbackContent.className = "text-sm text-red-700";
+                
+                // Highlight correct answer
+                shuffledQuestions[currentQuestionIndex].options.forEach((opt, idx) => {
+                    if(opt.correct) {
+                        allBtns[idx].classList.remove('border-slate-200', 'border-blue-100');
+                        allBtns[idx].classList.add('border-green-500', 'ring-1', 'ring-green-500');
+                    }
+                });
+            }
+            feedbackContent.innerText = option.rationale;
+            scoreDisplay.textContent = `Score: ${score}`;
+        }
+
+        // Handle Text Explanation Answer
+        function revealModelAnswer() {
+            const q = shuffledQuestions[currentQuestionIndex];
+            
+            feedbackArea.classList.remove('hidden');
+            selfMarkingBtns.classList.remove('hidden');
+            nextBtn.classList.add('hidden');
+            
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackContent = document.getElementById('feedback-content');
+            const feedbackIcon = document.getElementById('feedback-icon');
+
+            feedbackArea.className = "mt-6 p-4 rounded-lg border border-blue-200 bg-blue-50 fade-in";
+            feedbackTitle.className = "font-bold mb-1 text-blue-800";
+            feedbackTitle.innerText = "Compare with Model Answer";
+            feedbackIcon.innerHTML = '<i class="fa-solid fa-scale-balanced text-blue-600"></i>';
+            feedbackContent.className = "text-sm text-slate-700";
+            feedbackContent.innerHTML = q.rationale;
+        }
+
+        function markSelf(isCorrect) {
+            if (isCorrect) {
+                score++;
+                const feedbackTitle = document.getElementById('feedback-title');
+                feedbackTitle.innerText = "Marked as Correct";
+                feedbackTitle.className = "font-bold mb-1 text-green-800";
+                document.getElementById('feedback-area').className = "mt-6 p-4 rounded-lg border border-green-200 bg-green-50 transition-colors duration-300";
+            }
+            
+            scoreDisplay.textContent = `Score: ${score}`;
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+            resultsScreen.classList.add('flex');
+            
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('total-questions').innerText = shuffledQuestions.length;
+            
+            const resultIconContainer = document.getElementById('result-icon-container');
+            const resultMessage = document.getElementById('result-message');
+            
+            const percentage = (score / shuffledQuestions.length) * 100;
+
+            if (percentage >= 80) {
+                resultIconContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 text-5xl shadow-inner bg-green-100 text-green-600";
+                resultIconContainer.innerHTML = '<i class="fa-solid fa-trophy"></i>';
+                resultMessage.innerHTML = `<p class="font-bold text-lg mb-2">Distinction Level!</p><p>You have a solid grasp of both the vocabulary and the case study details.</p>`;
+            } else if (percentage >= 50) {
+                resultIconContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 text-5xl shadow-inner bg-blue-100 text-blue-600";
+                resultIconContainer.innerHTML = '<i class="fa-solid fa-thumbs-up"></i>';
+                resultMessage.innerHTML = `<p class="font-bold text-lg mb-2">Good Job!</p><p>You know your basics well. Review the rationales for the questions you missed.</p>`;
+            } else {
+                resultIconContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 text-5xl shadow-inner bg-orange-100 text-orange-600";
+                resultIconContainer.innerHTML = '<i class="fa-solid fa-book-open-reader"></i>';
+                resultMessage.innerHTML = `<p class="font-bold text-lg mb-2">Keep Practicing</p><p>Go back to the definitions in Source A and try again!</p>`;
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            resultsScreen.classList.add('hidden');
+            startQuiz();
+        }
+    </script>
+</body>
+</html>
