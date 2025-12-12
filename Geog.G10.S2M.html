@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G9 Geography: Midterm Reviewer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for Professional Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    animation: {
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                    },
+                    keyframes: {
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f1f5f9; color: #334155; }
+        
+        /* Card Styling */
+        .review-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Interactive Buttons */
+        .interactive-btn {
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+        .interactive-btn:hover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            transform: translateY(-1px);
+        }
+        .interactive-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        /* SVG Map Elements */
+        .highlight-zone {
+            fill: none;
+            stroke: #f59e0b; /* Amber for highlights */
+            stroke-width: 0;
+            stroke-opacity: 0.8;
+            transition: all 0.5s;
+        }
+        .highlight-zone.active {
+            stroke-width: 6px;
+        }
+        
+        .seal-dot { transition: all 0.3s; fill: #ef4444; }
+        .seal-dot.active { fill: #f59e0b; r: 6; stroke: white; stroke-width: 1px; }
+
+        /* Draggable Items (Biotic/Abiotic) */
+        .draggable-item {
+            cursor: grab;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .draggable-item:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+        }
+        .draggable-item.correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #15803d !important;
+            cursor: default;
+        }
+        .draggable-item.wrong {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #b91c1c !important;
+            animation: shake 0.5s;
+        }
+
+        /* Drop Targets */
+        .sort-box {
+            transition: all 0.2s;
+            border: 2px dashed #cbd5e1;
+        }
+        .sort-box.drag-over {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            transform: scale(1.02);
+        }
+
+        /* Fill in the Blanks Styling (Part 4) */
+        .label-option {
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .label-option.selected {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
+        }
+        .label-option.used {
+            background-color: #e2e8f0;
+            color: #94a3b8;
+            border-color: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .drop-zone {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .drop-zone:hover rect {
+            stroke: #3b82f6;
+            stroke-width: 2;
+            fill: #eff6ff;
+        }
+        .drop-zone.correct rect {
+            fill: #dcfce7;
+            stroke: #22c55e;
+        }
+        .drop-zone.wrong rect {
+            fill: #fee2e2;
+            stroke: #ef4444;
+        }
+        .drop-zone text {
+            pointer-events: none;
+            font-weight: bold;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Flip Card Styling (Part 5) */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+            height: 100%;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Reveal Content Animation */
+        .reveal-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+        }
+        .reveal-content.active {
+            max-height: 1000px; /* Increased for longer content */
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="pb-20">
+
+    <!-- Navbar -->
+    <nav class="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-earth-americas text-blue-400"></i>
+                G9 Geography Reviewer
+            </h1>
+            <div class="text-xs bg-slate-700 px-3 py-1 rounded text-slate-300">
+                Midterm S2
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto p-4 mt-6">
+
+        <!-- PART 1: MAP SKILLS -->
+        <section id="part1">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-blue-100 text-blue-700 w-8 h-8 flex items-center justify-center rounded font-bold text-sm">1</span>
+                <h2 class="text-2xl font-bold text-slate-800">Map Skills: Distribution</h2>
+            </div>
+            
+            <div class="review-card">
+                <h3 class="font-bold text-lg mb-4 text-slate-700">Figure 1: Weddell Seal Distribution Analysis</h3>
+                
+                <div class="flex flex-col md:flex-row gap-8 mb-8">
+                    <!-- Controls -->
+                    <div class="w-full md:w-1/3 space-y-3">
+                        <p class="text-sm text-slate-500 mb-2">Use the buttons below to analyze the map pattern step-by-step.</p>
+                        
+                        <button onclick="highlightMap('coast')" class="interactive-btn w-full p-3 rounded text-left flex items-center gap-3">
+                            <div class="bg-blue-100 p-2 rounded text-blue-600"><i class="fa-solid fa-water"></i></div>
+                            <div>
+                                <span class="block font-semibold text-sm">1. Check the Coast</span>
+                                <span class="text-xs text-slate-500">Is it coastal or inland?</span>
+                            </div>
+                        </button>
+
+                        <button onclick="highlightMap('inland')" class="interactive-btn w-full p-3 rounded text-left flex items-center gap-3">
+                            <div class="bg-red-100 p-2 rounded text-red-600"><i class="fa-regular fa-circle-xmark"></i></div>
+                            <div>
+                                <span class="block font-semibold text-sm">2. Check the Center</span>
+                                <span class="text-xs text-slate-500">Is the middle empty?</span>
+                            </div>
+                        </button>
+
+                        <button onclick="highlightMap('clusters')" class="interactive-btn w-full p-3 rounded text-left flex items-center gap-3">
+                            <div class="bg-amber-100 p-2 rounded text-amber-600"><i class="fa-solid fa-users-viewfinder"></i></div>
+                            <div>
+                                <span class="block font-semibold text-sm">3. Locate Clusters</span>
+                                <span class="text-xs text-slate-500">Where are the groups?</span>
+                            </div>
+                        </button>
+                        
+                        <div id="map-feedback" class="mt-4 text-sm text-slate-600 bg-slate-50 p-4 rounded border border-slate-200 min-h-[80px] flex items-center">
+                            Select an analysis step above to reveal details about the distribution.
+                        </div>
+                    </div>
+
+                    <!-- SVG Map -->
+                    <div class="w-full md:w-2/3 bg-slate-50 rounded border border-slate-200 overflow-hidden relative">
+                         <svg viewBox="0 0 600 500" class="w-full h-auto">
+                            <!-- Background Grid -->
+                            <path d="M300,50 L300,450 M100,250 L500,250" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+                            <circle cx="300" cy="250" r="180" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.5"/>
+                            
+                            <!-- Highlight Zones -->
+                            <path id="zone-coast" class="highlight-zone" d="M280,250 C250,230 220,180 260,140 C280,120 310,120 320,110 C360,90 400,150 420,200 C440,240 450,280 420,320 C390,360 350,380 300,380 C250,380 210,360 180,320 C160,280 160,240 190,220 Q240,240 280,250 Z" />
+                            <circle id="zone-inland" cx="300" cy="250" r="80" fill="#ef4444" opacity="0" style="transition: opacity 0.5s"/>
+
+                            <!-- Continent -->
+                            <path d="M280,250 C250,230 220,180 260,140 C280,120 310,120 320,110 C360,90 400,150 420,200 C440,240 450,280 420,320 C390,360 350,380 300,380 C250,380 210,360 180,320 C160,280 160,240 190,220 Q240,240 280,250 Z" fill="white" stroke="#94a3b8" stroke-width="2" filter="drop-shadow(0px 2px 2px rgba(0,0,0,0.1))"/>
+                            
+                            <!-- Labels -->
+                            <text x="300" y="260" text-anchor="middle" font-size="14" fill="#94a3b8" font-weight="bold">ANTARCTICA</text>
+                            <text x="210" y="150" text-anchor="middle" font-size="12" fill="#3b82f6" font-style="italic">Weddell Sea</text>
+                            <text x="300" y="420" text-anchor="middle" font-size="12" fill="#3b82f6" font-style="italic">Ross Sea</text>
+
+                            <!-- Seal Dots -->
+                            <g id="all-seals">
+                                <circle cx="230" cy="180" r="4" class="seal-dot weddell"/>
+                                <circle cx="235" cy="175" r="3" class="seal-dot weddell"/>
+                                <circle cx="225" cy="185" r="4" class="seal-dot weddell"/>
+                                <circle cx="290" cy="370" r="4" class="seal-dot ross"/>
+                                <circle cx="300" cy="375" r="5" class="seal-dot ross"/>
+                                <circle cx="310" cy="370" r="4" class="seal-dot ross"/>
+                                <circle cx="320" cy="360" r="4" class="seal-dot ross"/>
+                                <circle cx="420" cy="200" r="3" class="seal-dot"/>
+                                <circle cx="430" cy="220" r="3" class="seal-dot"/>
+                                <circle cx="180" cy="320" r="3" class="seal-dot"/>
+                            </g>
+                        </svg>
+                        
+                        <!-- Static Key Overlay -->
+                        <div class="absolute top-4 right-4 bg-white/90 p-3 rounded shadow-sm border border-slate-200 text-xs">
+                            <div class="font-bold mb-2 text-slate-700 border-b pb-1">Map Key</div>
+                            <div class="flex items-center gap-2 mb-1"><div class="w-3 h-3 rounded-full bg-red-500"></div> Seal Population</div>
+                            <div class="flex items-center gap-2"><div class="w-3 h-3 border border-slate-400 bg-white"></div> Ice Sheet</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 pt-4 border-t border-slate-100">
+                    <!-- Q1 -->
+                    <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                        <p class="font-bold text-slate-800 mb-2 text-sm">1. Describe the distribution of Weddell seals in Antarctica.</p>
+                        <button onclick="toggleReveal('ans-dist')" class="text-xs text-blue-600 hover:underline mb-2">Show Model Answer</button>
+                        <div id="ans-dist" class="reveal-content text-sm text-slate-700">
+                            <p class="italic">"The seals are unevenly distributed. They are found almost entirely along the <strong>coastline</strong> of Antarctica, with <strong>none in the inland</strong> center. Major clusters are located in the <strong>Ross Sea</strong> and Weddell Sea."</p>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                        <p class="font-bold text-slate-800 mb-2 text-sm">2. Describe the climate of Antarctica.</p>
+                        <div class="flex items-center gap-2 mb-2">
+                            <button onclick="toggleReveal('ans-climate')" class="text-xs text-blue-600 hover:underline">Show Model Answer</button>
+                            <span class="text-xs text-slate-400">|</span>
+                            <span class="text-xs text-slate-500 italic">Think: Temp, Rain, Seasons</span>
+                        </div>
+                        <div id="ans-climate" class="reveal-content text-sm text-slate-700 bg-white p-3 rounded border border-blue-100">
+                            <ul class="list-disc list-inside space-y-1">
+                                <li><strong>Temperature:</strong> Extremely cold all year round, with temperatures often well below freezing (e.g., -20°C to -60°C).</li>
+                                <li><strong>Precipitation:</strong> Very low precipitation (it is a "Cold Desert"), mostly falling as snow.</li>
+                                <li><strong>Seasonality:</strong> Extreme seasonal difference in daylight (24 hours light in summer, 24 hours darkness in winter).</li>
+                            </ul>
+                            <p class="mt-2 text-xs text-slate-500 bg-slate-50 p-2 rounded"><strong>Geographer's Note:</strong> Antarctica is a desert because high pressure systems prevent moisture from forming clouds.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 2: DATA CALCULATION -->
+        <section id="part2">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-blue-100 text-blue-700 w-8 h-8 flex items-center justify-center rounded font-bold text-sm">2</span>
+                <h2 class="text-2xl font-bold text-slate-800">Data Interpretation</h2>
+            </div>
+
+            <div class="review-card">
+                <h3 class="font-bold text-lg mb-4 text-slate-700">Figure 2: Calculating Missing Percentages</h3>
+                <p class="text-sm text-slate-500 mb-4">Complete the table below. Remember the two strategies: (Part/Total)*100 for individual rows, and (100 - Knowns) for missing chunks.</p>
+
+                <div class="overflow-x-auto border border-slate-200 rounded">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Region</th><th>No. of Seals</th><th>Percentage (%)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>4,926</td><td><input type="number" id="input-r1" class="input-cell" placeholder="?"></td></tr>
+                            <tr><td>2</td><td>10,405</td><td><input type="number" id="input-r2" class="input-cell" placeholder="?"></td></tr>
+                            <tr><td>3</td><td>10,975</td><td>11</td></tr>
+                            <tr><td>4</td><td>14,038</td><td><input type="number" id="input-r4" class="input-cell" placeholder="?"></td></tr>
+                            <tr><td>5</td><td>31,415</td><td><input type="number" id="input-r5" class="input-cell" placeholder="?"></td></tr>
+                            <tr><td>6</td><td>13,586</td><td>16</td></tr>
+                            <tr><td>Total</td><td>85,345</td><td>100</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 flex items-center gap-4">
+                    <button onclick="checkMath()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition font-medium shadow-sm">
+                        Verify Answers
+                    </button>
+                    <span id="math-feedback" class="text-sm font-medium"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 3: CLIMATE -->
+        <section id="part3">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-blue-100 text-blue-700 w-8 h-8 flex items-center justify-center rounded font-bold text-sm">3</span>
+                <h2 class="text-2xl font-bold text-slate-800">Climate Analysis</h2>
+            </div>
+
+            <div class="review-card">
+                
+                <!-- SORTING GAME -->
+                <div class="mb-8 border-b pb-8">
+                    <h3 class="font-bold text-lg mb-4 text-slate-700">Quick Sort: Biotic vs Abiotic</h3>
+                    <p class="text-sm text-slate-500 mb-4">Drag the items into the correct boxes.</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex-1 flex gap-4">
+                            <div id="drop-abiotic" class="sort-box w-1/2 min-h-[150px] bg-slate-50 rounded-lg p-4 text-center" ondrop="drop(event, 'abiotic')" ondragover="allowDrop(event)">
+                                <h4 class="font-bold text-blue-600 mb-2">Abiotic (Non-Living)</h4>
+                                <div class="text-xs text-slate-400 pointer-events-none">Drop Items Here</div>
+                            </div>
+                            <div id="drop-biotic" class="sort-box w-1/2 min-h-[150px] bg-slate-50 rounded-lg p-4 text-center" ondrop="drop(event, 'biotic')" ondragover="allowDrop(event)">
+                                <h4 class="font-bold text-green-600 mb-2">Biotic (Living)</h4>
+                                <div class="text-xs text-slate-400 pointer-events-none">Drop Items Here</div>
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-1/3 flex flex-wrap content-start gap-2 bg-white p-2 rounded border border-slate-200">
+                            <div id="item1" class="draggable-item px-3 py-2 bg-white border border-slate-300 rounded shadow-sm text-sm" draggable="true" ondragstart="drag(event)" data-type="abiotic">Rainfall</div>
+                            <div id="item2" class="draggable-item px-3 py-2 bg-white border border-slate-300 rounded shadow-sm text-sm" draggable="true" ondragstart="drag(event)" data-type="biotic">Jaguar</div>
+                            <div id="item3" class="draggable-item px-3 py-2 bg-white border border-slate-300 rounded shadow-sm text-sm" draggable="true" ondragstart="drag(event)" data-type="abiotic">Soil pH</div>
+                            <div id="item4" class="draggable-item px-3 py-2 bg-white border border-slate-300 rounded shadow-sm text-sm" draggable="true" ondragstart="drag(event)" data-type="biotic">Mahogany Tree</div>
+                            <div id="item5" class="draggable-item px-3 py-2 bg-white border border-slate-300 rounded shadow-sm text-sm" draggable="true" ondragstart="drag(event)" data-type="abiotic">Sunlight</div>
+                            <div id="item6" class="draggable-item px-3 py-2 bg-white border border-slate-300 rounded shadow-sm text-sm" draggable="true" ondragstart="drag(event)" data-type="biotic">Fungi</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="font-bold text-lg mb-2 text-slate-700">Exam Question: Climate Graphs</h3>
+                <p class="text-sm text-slate-500 mb-6">Study the graphs showing Temperature and Precipitation.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="relative">
+                        <p class="text-center text-sm font-bold mb-2 text-slate-600">Graph A</p>
+                        <div class="h-64 border rounded p-2"><canvas id="chartA"></canvas></div>
+                    </div>
+                    <div class="relative">
+                        <p class="text-center text-sm font-bold mb-2 text-slate-600">Graph B</p>
+                        <div class="h-64 border rounded p-2"><canvas id="chartB"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- Questions & Model Answers -->
+                <div class="space-y-6">
+                    <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                        <p class="font-bold text-slate-800 mb-3">1. Identify the graph which shows a tropical rainforest climate. Give two reasons for your choice.</p>
+                        <div class="flex gap-2">
+                            <button onclick="toggleReveal('ans-q1')" class="text-sm text-blue-600 hover:underline">Reveal Model Answer</button>
+                        </div>
+                        <div id="ans-q1" class="reveal-content mt-3 text-sm text-slate-700 bg-white p-3 rounded border border-blue-100">
+                            <p><strong>Graph:</strong> Graph B</p>
+                            <ul class="list-disc list-inside mt-1 space-y-1">
+                                <li><strong>Reason 1 (Temp):</strong> The temperature is high and constant all year round (approx 27°C) with a small range.</li>
+                                <li><strong>Reason 2 (Rain):</strong> There is high precipitation every month (above 200mm), showing no dry season.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                        <p class="font-bold text-slate-800 mb-3">2. Explain why some areas have a tropical rainforest climate.</p>
+                        <div class="flex gap-2">
+                            <button onclick="toggleReveal('ans-q2')" class="text-sm text-blue-600 hover:underline">Reveal Model Answer</button>
+                        </div>
+                        <div id="ans-q2" class="reveal-content mt-3 text-sm text-slate-700 bg-white p-3 rounded border border-blue-100">
+                            <p><strong>Explanation Process:</strong></p>
+                            <ul class="list-decimal list-inside mt-1 space-y-1">
+                                <li><strong>Sun Angle:</strong> The sun is directly overhead at the Equator (high insolation), causing intense heating.</li>
+                                <li><strong>Low Pressure:</strong> Hot air rises rapidly, creating a zone of low pressure (convection).</li>
+                                <li><strong>Condensation:</strong> As the moist air rises, it cools and condenses to form clouds.</li>
+                                <li><strong>Result:</strong> This leads to heavy daily convectional rainfall.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 4: ECOSYSTEM (FILL IN THE BLANKS) -->
+        <section id="part4">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-blue-100 text-blue-700 w-8 h-8 flex items-center justify-center rounded font-bold text-sm">4</span>
+                <h2 class="text-2xl font-bold text-slate-800">Ecosystem Structure: Fill in the Blanks</h2>
+            </div>
+
+            <div class="review-card">
+                <div class="flex justify-between items-start mb-6 border-b pb-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-700">Interactive Diagram</h3>
+                        <p class="text-sm text-slate-500"><strong>Instructions:</strong> Click a label from the "Choices Box", then click the matching empty box on the diagram.</p>
+                    </div>
+                    <button onclick="resetLayers()" class="text-xs text-slate-400 hover:text-blue-600 underline cursor-pointer">Reset Diagram</button>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-8">
+                    
+                    <!-- SVG Diagram with Drop Zones -->
+                    <div class="w-full md:w-2/3 bg-gradient-to-b from-sky-50 to-green-50 rounded border border-slate-200 relative">
+                        <svg viewBox="0 0 400 500" class="w-full h-auto">
+                            <!-- Axis -->
+                            <line x1="40" y1="50" x2="40" y2="450" stroke="#94a3b8" stroke-dasharray="4"/>
+                            <text x="10" y="55" font-size="10" fill="#64748b">40m+</text>
+                            <text x="10" y="150" font-size="10" fill="#64748b">30m</text>
+                            <text x="10" y="300" font-size="10" fill="#64748b">15m</text>
+                            <text x="10" y="450" font-size="10" fill="#64748b">0m</text>
+
+                            <!-- TREES (Background Illustration) -->
+                            <!-- Emergent -->
+                            <rect x="150" y="80" width="10" height="370" fill="#78350f" />
+                            <circle cx="155" cy="80" r="50" fill="#15803d" opacity="0.9"/>
+                            <rect x="280" y="60" width="12" height="390" fill="#78350f" />
+                            <circle cx="286" cy="60" r="45" fill="#15803d" opacity="0.9"/>
+                            <!-- Canopy -->
+                            <ellipse cx="200" cy="150" rx="200" ry="50" fill="#22c55e" opacity="0.95"/>
+                            <rect x="80" y="150" width="8" height="300" fill="#92400e" />
+                            <rect x="340" y="150" width="8" height="300" fill="#92400e" />
+                            <!-- Under Canopy -->
+                            <rect x="100" y="250" width="5" height="200" fill="#713f12" />
+                            <path d="M80,250 L120,250 L100,200 Z" fill="#4ade80" />
+                            <rect x="300" y="280" width="6" height="170" fill="#713f12" />
+                            <circle cx="303" cy="280" r="25" fill="#4ade80" opacity="0.8"/>
+                            <!-- Shrub -->
+                            <rect x="0" y="420" width="400" height="80" fill="#064e3b" opacity="0.8" />
+                            <path d="M50,450 L60,420 L70,450 Z" fill="#22c55e"/>
+                            <path d="M150,450 L160,410 L170,450 Z" fill="#22c55e"/>
+
+                            <!-- INTERACTIVE DROP ZONES -->
+                            
+                            <!-- Emergent (Top Left) -->
+                            <g class="drop-zone" onclick="placeLabel('Emergent Trees')" id="zone-Emergent Trees">
+                                <line x1="280" y1="60" x2="330" y2="40" stroke="#64748b"/>
+                                <rect x="230" y="10" width="140" height="25" rx="4" fill="white" stroke="#cbd5e1" stroke-dasharray="4"/>
+                                <text x="300" y="27" text-anchor="middle" font-size="10" fill="#94a3b8">?</text>
+                            </g>
+
+                            <!-- Main Canopy (Top Middle) -->
+                            <g class="drop-zone" onclick="placeLabel('Main Canopy')" id="zone-Main Canopy">
+                                <line x1="200" y1="150" x2="100" y2="130" stroke="#64748b"/>
+                                <rect x="50" y="105" width="140" height="25" rx="4" fill="white" stroke="#cbd5e1" stroke-dasharray="4"/>
+                                <text x="120" y="122" text-anchor="middle" font-size="10" fill="#94a3b8">?</text>
+                            </g>
+
+                            <!-- Drip Tips (Canopy Leaf Detail) -->
+                            <g class="drop-zone" onclick="placeLabel('Leaves may have drip tips to shed heavy rain.')" id="zone-Leaves may have drip tips to shed heavy rain.">
+                                <line x1="250" y1="160" x2="280" y2="180" stroke="#64748b"/>
+                                <rect x="250" y="180" width="140" height="35" rx="4" fill="white" stroke="#cbd5e1" stroke-dasharray="4"/>
+                                <text x="320" y="200" text-anchor="middle" font-size="9" fill="#94a3b8">? (Leaves)</text>
+                            </g>
+
+                            <!-- Lianas (Vines) -->
+                            <g class="drop-zone" onclick="placeLabel('Lianas are woody vines that climb high to reach the sunlight.')" id="zone-Lianas are woody vines that climb high to reach the sunlight.">
+                                <path d="M225,160 Q240,250 215,350" stroke="#3f6212" stroke-width="2" fill="none"/>
+                                <line x1="220" y1="250" x2="180" y2="250" stroke="#64748b"/>
+                                <rect x="40" y="235" width="140" height="35" rx="4" fill="white" stroke="#cbd5e1" stroke-dasharray="4"/>
+                                <text x="110" y="255" text-anchor="middle" font-size="9" fill="#94a3b8">? (Vines)</text>
+                            </g>
+
+                            <!-- Lower Canopy -->
+                            <g class="drop-zone" onclick="placeLabel('Lower Canopy')" id="zone-Lower Canopy">
+                                <line x1="300" y1="280" x2="350" y2="260" stroke="#64748b"/>
+                                <rect x="250" y="230" width="140" height="25" rx="4" fill="white" stroke="#cbd5e1" stroke-dasharray="4"/>
+                                <text x="320" y="247" text-anchor="middle" font-size="10" fill="#94a3b8">?</text>
+                            </g>
+
+                            <!-- Trunks -->
+                            <g class="drop-zone" onclick="placeLabel('Trunks are tall and thin to reach the sunlight.')" id="zone-Trunks are tall and thin to reach the sunlight.">
+                                <line x1="155" y1="300" x2="180" y2="300" stroke="#64748b"/>
+                                <rect x="180" y="285" width="140" height="35" rx="4" fill="white" stroke="#cbd5e1" stroke-dasharray="4"/>
+                                <text x="250" y="305" text-anchor="middle" font-size="9" fill="#94a3b8">? (Trunks)</text>
+                            </g>
+
+                            <!-- Buttress Roots -->
+                            <g class="drop-zone" onclick="placeLabel('Buttress roots support trees in shallow soil.')" id="zone-Buttress roots support trees in shallow soil.">
+                                <path d="M145,450 Q130,480 110,480 H190 Q170,480 155,450" fill="#522500"/>
+                                <line x1="160" y1="460" x2="200" y2="460" stroke="#64748b"/>
+                                <rect x="200" y="445" width="140" height="35" rx="4" fill="white" stroke="#cbd5e1" stroke-dasharray="4"/>
+                                <text x="270" y="465" text-anchor="middle" font-size="9" fill="#94a3b8">? (Roots)</text>
+                            </g>
+
+                            <!-- Shrub Layer -->
+                            <g class="drop-zone" onclick="placeLabel('Shrub Layer')" id="zone-Shrub Layer">
+                                <line x1="50" y1="430" x2="80" y2="400" stroke="#64748b"/>
+                                <rect x="50" y="375" width="140" height="25" rx="4" fill="white" stroke="#cbd5e1" stroke-dasharray="4"/>
+                                <text x="120" y="392" text-anchor="middle" font-size="10" fill="#94a3b8">?</text>
+                            </g>
+
+                            <!-- Ground Layer -->
+                            <g class="drop-zone" onclick="placeLabel('Ground Layer')" id="zone-Ground Layer">
+                                <line x1="350" y1="480" x2="350" y2="460" stroke="#64748b"/>
+                                <rect x="280" y="480" width="110" height="20" rx="4" fill="white" stroke="#cbd5e1" stroke-dasharray="4"/>
+                                <text x="335" y="494" text-anchor="middle" font-size="10" fill="#94a3b8">?</text>
+                            </g>
+
+                        </svg>
+                    </div>
+
+                    <!-- Choice Box (Word Bank) -->
+                    <div class="w-full md:w-1/3 bg-slate-50 p-6 rounded-lg border border-slate-200 shadow-inner max-h-[600px] overflow-y-auto">
+                        <h4 class="font-bold text-slate-700 mb-4 border-b pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-list-ul text-blue-500"></i> Choices Box
+                        </h4>
+                        <div class="flex flex-col gap-2" id="word-bank">
+                            <div onclick="selectLabel(this, 'Emergent Trees')" class="label-option p-2 bg-white border border-slate-300 rounded text-xs font-semibold shadow-sm hover:bg-blue-50 transition">Emergent Trees</div>
+                            <div onclick="selectLabel(this, 'Main Canopy')" class="label-option p-2 bg-white border border-slate-300 rounded text-xs font-semibold shadow-sm hover:bg-blue-50 transition">Main Canopy</div>
+                            <div onclick="selectLabel(this, 'Lower Canopy')" class="label-option p-2 bg-white border border-slate-300 rounded text-xs font-semibold shadow-sm hover:bg-blue-50 transition">Lower Canopy</div>
+                            <div onclick="selectLabel(this, 'Shrub Layer')" class="label-option p-2 bg-white border border-slate-300 rounded text-xs font-semibold shadow-sm hover:bg-blue-50 transition">Shrub Layer</div>
+                            <div onclick="selectLabel(this, 'Ground Layer')" class="label-option p-2 bg-white border border-slate-300 rounded text-xs font-semibold shadow-sm hover:bg-blue-50 transition">Ground Layer</div>
+                            <div onclick="selectLabel(this, 'Leaves may have drip tips to shed heavy rain.')" class="label-option p-2 bg-white border border-slate-300 rounded text-xs text-slate-600 shadow-sm hover:bg-blue-50 transition">Leaves may have drip tips to shed heavy rain.</div>
+                            <div onclick="selectLabel(this, 'Trunks are tall and thin to reach the sunlight.')" class="label-option p-2 bg-white border border-slate-300 rounded text-xs text-slate-600 shadow-sm hover:bg-blue-50 transition">Trunks are tall and thin to reach the sunlight.</div>
+                            <div onclick="selectLabel(this, 'Lianas are woody vines that climb high to reach the sunlight.')" class="label-option p-2 bg-white border border-slate-300 rounded text-xs text-slate-600 shadow-sm hover:bg-blue-50 transition">Lianas are woody vines that climb high to reach the sunlight.</div>
+                            <div onclick="selectLabel(this, 'Buttress roots support trees in shallow soil.')" class="label-option p-2 bg-white border border-slate-300 rounded text-xs text-slate-600 shadow-sm hover:bg-blue-50 transition">Buttress roots support trees in shallow soil.</div>
+                        </div>
+                        <div id="selection-status" class="mt-6 text-center text-xs text-slate-400 p-2 border border-dashed rounded">
+                            Select a label to start
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 5: ECUADOR CASE STUDY -->
+        <section id="part5">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-blue-100 text-blue-700 w-8 h-8 flex items-center justify-center rounded font-bold text-sm">5</span>
+                <h2 class="text-2xl font-bold text-slate-800">Ecuador: Tropical Rainforest Case Study</h2>
+            </div>
+
+            <div class="review-card">
+                <!-- 1. Flip Cards for Causes & Solutions -->
+                <div class="mb-8">
+                    <h3 class="font-bold text-lg mb-4 text-slate-700">Explore Causes & Solutions</h3>
+                    <p class="text-sm text-slate-500 mb-4">Click the cards to flip them and learn the details.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Card 1: Cause - Oil -->
+                        <div class="flip-card h-48" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front bg-red-50 border border-red-200">
+                                    <div>
+                                        <i class="fa-solid fa-oil-well text-3xl text-red-500 mb-2"></i>
+                                        <h4 class="font-bold text-red-800">Cause: Oil Extraction</h4>
+                                    </div>
+                                </div>
+                                <div class="flip-card-back bg-white border border-red-200">
+                                    <p class="text-xs text-slate-700">Oil companies clear vast areas of the 'Oriente' region. Roads built for pipelines open up the forest to illegal loggers.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Cause - Agriculture -->
+                        <div class="flip-card h-48" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front bg-orange-50 border border-orange-200">
+                                    <div>
+                                        <i class="fa-solid fa-cow text-3xl text-orange-500 mb-2"></i>
+                                        <h4 class="font-bold text-orange-800">Cause: Cattle & Farming</h4>
+                                    </div>
+                                </div>
+                                <div class="flip-card-back bg-white border border-orange-200">
+                                    <p class="text-xs text-slate-700">Small-scale slash-and-burn farming and large cattle ranches clear land. Palm oil plantations are a growing threat.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Solution - Socio Bosque -->
+                        <div class="flip-card h-48" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front bg-green-50 border border-green-200">
+                                    <div>
+                                        <i class="fa-solid fa-hand-holding-dollar text-3xl text-green-500 mb-2"></i>
+                                        <h4 class="font-bold text-green-800">Strategy: Socio Bosque</h4>
+                                    </div>
+                                </div>
+                                <div class="flip-card-back bg-white border border-green-200">
+                                    <p class="text-xs text-slate-700"><strong>Government Scheme (2008):</strong> Pays landowners to conserve forest. Over 1.5 million hectares protected. Helps locals financially.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Solution - Ecotourism -->
+                        <div class="flip-card h-48" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front bg-blue-50 border border-blue-200">
+                                    <div>
+                                        <i class="fa-solid fa-camera text-3xl text-blue-500 mb-2"></i>
+                                        <h4 class="font-bold text-blue-800">Strategy: Ecotourism</h4>
+                                    </div>
+                                </div>
+                                <div class="flip-card-back bg-white border border-blue-200">
+                                    <p class="text-xs text-slate-700">Example: <strong>Yachana Lodge</strong>. Tourists pay to visit. Money supports local jobs and education, giving an alternative to logging.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <!-- 2. 7-Mark Essay Builder -->
+                <div class="border-t pt-6">
+                    <h3 class="font-bold text-lg mb-2 text-slate-700">Exam Skill: The 7-Mark Case Study Answer</h3>
+                    <p class="text-sm text-slate-500 mb-4">Question: <em>"Describe and explain the strategies used to manage a tropical rainforest you have studied."</em></p>
+                    
+                    <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                        <p class="font-bold text-slate-800 mb-2 text-sm">Build your Model Answer:</p>
+                        <div class="space-y-2">
+                            <button onclick="toggleReveal('point1')" class="w-full text-left px-3 py-2 bg-white border rounded text-sm hover:bg-blue-50 flex justify-between">
+                                <span>1. Name specific Government Strategy</span> <i class="fa-solid fa-chevron-down text-slate-400"></i>
+                            </button>
+                            <div id="point1" class="reveal-content px-3 text-sm text-slate-600">
+                                "The government of Ecuador introduced the <strong>Socio Bosque</strong> programme in 2008. This scheme provides direct financial payments to landowners who voluntarily protect their forest."
+                            </div>
+
+                            <button onclick="toggleReveal('point2')" class="w-full text-left px-3 py-2 bg-white border rounded text-sm hover:bg-blue-50 flex justify-between">
+                                <span>2. Explain WHY it is sustainable</span> <i class="fa-solid fa-chevron-down text-slate-400"></i>
+                            </button>
+                            <div id="point2" class="reveal-content px-3 text-sm text-slate-600">
+                                "This is sustainable because it reduces deforestation rates while simultaneously providing an income for local communities, addressing both environmental and social needs."
+                            </div>
+
+                            <button onclick="toggleReveal('point3')" class="w-full text-left px-3 py-2 bg-white border rounded text-sm hover:bg-blue-50 flex justify-between">
+                                <span>3. Name a specific NGO/Local Strategy</span> <i class="fa-solid fa-chevron-down text-slate-400"></i>
+                            </button>
+                            <div id="point3" class="reveal-content px-3 text-sm text-slate-600">
+                                "Additionally, small-scale ecotourism projects like <strong>Yachana Lodge</strong> involve local people. Tourists pay to see the biodiversity, which incentivizes locals to protect the animals rather than hunt them."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center p-8 text-slate-400 text-sm">
+        <p>Created for Grade 9 Revision</p>
+    </footer>
+
+    <script>
+        // --- REVEAL LOGIC ---
+        function toggleReveal(id) {
+            const el = document.getElementById(id);
+            if(el.classList.contains('active')) {
+                el.classList.remove('active');
+            } else {
+                el.classList.add('active');
+            }
+        }
+
+        // --- MAP LOGIC ---
+        function highlightMap(type) {
+            // Reset
+            document.getElementById('zone-coast').classList.remove('active');
+            document.getElementById('zone-inland').style.opacity = '0';
+            document.querySelectorAll('.seal-dot').forEach(d => {
+                d.classList.remove('active');
+                d.style.fill = '#ef4444';
+            });
+
+            const fb = document.getElementById('map-feedback');
+
+            if(type === 'coast') {
+                document.getElementById('zone-coast').classList.add('active');
+                fb.innerHTML = `<strong>1. Coastal Distribution:</strong><br>Notice how the seals are located almost exclusively on the edges (coast) of the continent.`;
+            } else if(type === 'inland') {
+                document.getElementById('zone-inland').style.opacity = '0.3';
+                fb.innerHTML = `<strong>2. Inland Void:</strong><br>The center of the continent (Ice Sheet) is empty. No seals are found here.`;
+            } else if(type === 'clusters') {
+                document.querySelectorAll('.seal-dot.weddell, .seal-dot.ross').forEach(d => d.classList.add('active'));
+                fb.innerHTML = `<strong>3. Specific Clusters:</strong><br>There are large groups in the Ross Sea (Bottom) and Weddell Sea (Top Left).`;
+            }
+        }
+
+        // --- MATH LOGIC ---
+        function checkMath() {
+            const r1 = document.getElementById('input-r1').value;
+            const r2 = document.getElementById('input-r2').value;
+            const r4 = document.getElementById('input-r4').value;
+            const r5 = document.getElementById('input-r5').value;
+            const feedback = document.getElementById('math-feedback');
+            
+            if (!r1 || !r2 || !r4 || !r5) {
+                feedback.textContent = "Please fill in all 4 inputs.";
+                feedback.className = "text-sm font-medium text-slate-500";
+                return;
+            }
+
+            let valid = true;
+            if (r1 < 5 || r1 > 6) valid = false;
+            if (r2 < 12 || r2 > 13) valid = false;
+            let sum = parseFloat(r4) + parseFloat(r5);
+            if (sum < 55 || sum > 58) valid = false;
+
+            if(valid) {
+                feedback.innerHTML = `<span class="text-green-600"><i class="fa-solid fa-check"></i> Correct! R1~6%, R2~12%, and R4+R5 sum to ~56%.</span>`;
+            } else {
+                feedback.innerHTML = `<span class="text-red-600"><i class="fa-solid fa-xmark"></i> Review your calculations. R4+R5 should sum to 56%.</span>`;
+            }
+        }
+
+        // --- DRAG AND DROP SORTING LOGIC ---
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('drag-over');
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("id", ev.target.id);
+            ev.dataTransfer.setData("type", ev.target.getAttribute('data-type'));
+        }
+
+        function drop(ev, boxType) {
+            ev.preventDefault();
+            ev.currentTarget.classList.remove('drag-over');
+            
+            const id = ev.dataTransfer.getData("id");
+            const type = ev.dataTransfer.getData("type");
+            const element = document.getElementById(id);
+
+            if (type === boxType) {
+                // Correct Drop
+                ev.currentTarget.appendChild(element);
+                element.classList.add('correct');
+                element.classList.remove('wrong');
+                element.draggable = false;
+            } else {
+                // Wrong Drop
+                element.classList.add('wrong');
+                setTimeout(() => element.classList.remove('wrong'), 500);
+            }
+        }
+        
+        // Remove Drag Over style on leave
+        document.querySelectorAll('.sort-box').forEach(box => {
+            box.addEventListener('dragleave', () => box.classList.remove('drag-over'));
+        });
+
+
+        // --- FILL IN THE BLANKS LOGIC ---
+        let selectedLabel = null;
+        let selectedElement = null;
+
+        function selectLabel(el, label) {
+            if(el.classList.contains('used')) return;
+
+            // Deselect previous
+            if(selectedElement) selectedElement.classList.remove('selected');
+            
+            // Select new
+            selectedLabel = label;
+            selectedElement = el;
+            el.classList.add('selected');
+            
+            // Truncate long text for display
+            let displayLabel = label.length > 30 ? label.substring(0, 25) + "..." : label;
+            
+            document.getElementById('selection-status').innerHTML = `Selected: <strong class="text-blue-600">${displayLabel}</strong>. Click a box on diagram.`;
+            document.getElementById('selection-status').className = "mt-6 text-center text-xs p-2 bg-blue-50 text-blue-800 border border-blue-200 rounded animate-pulse";
+        }
+
+        function placeLabel(zoneId) {
+            if(!selectedLabel) {
+                // Shake if no label selected
+                const zone = document.getElementById(`zone-${zoneId}`);
+                if(zone) {
+                    zone.classList.add('animate-shake');
+                    setTimeout(() => zone.classList.remove('animate-shake'), 500);
+                }
+                return;
+            }
+
+            const zone = document.getElementById(`zone-${zoneId}`);
+            
+            if(zoneId === selectedLabel) {
+                // Correct
+                const textEl = zone.querySelector('text');
+                const rectEl = zone.querySelector('rect');
+                
+                // For long descriptions, wrap or shorten text size in SVG
+                if(selectedLabel.length > 20) {
+                    textEl.setAttribute('font-size', '8');
+                    // Simple wrap logic for SVG is hard, let's just show full text
+                    // or maybe just "Correct" then tooltip? 
+                    // Let's truncate visually but it's correct
+                    let shortText = selectedLabel.substring(0, 25) + "...";
+                    textEl.textContent = shortText;
+                    // Add title for hover
+                    let title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+                    title.textContent = selectedLabel;
+                    zone.appendChild(title);
+                } else {
+                    textEl.textContent = selectedLabel;
+                }
+
+                textEl.setAttribute('fill', '#15803d'); // Green text
+                rectEl.setAttribute('stroke', '#22c55e'); // Green border
+                rectEl.setAttribute('fill', '#f0fdf4'); // Light green bg
+                rectEl.setAttribute('stroke-dasharray', '0'); // Solid line
+                
+                zone.classList.add('correct');
+                
+                // Mark button as used
+                selectedElement.classList.remove('selected');
+                selectedElement.classList.add('used');
+                
+                // Reset Selection
+                selectedLabel = null;
+                selectedElement = null;
+                document.getElementById('selection-status').innerHTML = `<span class="text-green-600 font-bold"><i class="fa-solid fa-check"></i> Correct!</span> Select another.`;
+                document.getElementById('selection-status').className = "mt-6 text-center text-xs p-2 bg-green-50 text-green-800 border border-green-200 rounded";
+
+            } else {
+                // Wrong
+                zone.classList.add('animate-shake');
+                const rectEl = zone.querySelector('rect');
+                const originalStroke = rectEl.getAttribute('stroke');
+                rectEl.setAttribute('stroke', '#ef4444');
+                setTimeout(() => {
+                    zone.classList.remove('animate-shake');
+                    if(!zone.classList.contains('correct')) rectEl.setAttribute('stroke', '#cbd5e1');
+                }, 500);
+                
+                document.getElementById('selection-status').innerHTML = `<span class="text-red-500 font-bold"><i class="fa-solid fa-xmark"></i> Incorrect!</span> Try again.`;
+                document.getElementById('selection-status').className = "mt-6 text-center text-xs p-2 bg-red-50 text-red-800 border border-red-200 rounded";
+            }
+        }
+
+        function resetLayers() {
+            location.reload(); 
+        }
+
+        // --- CHARTS INIT ---
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: { legend: { position: 'bottom' } },
+            scales: {
+                y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Precipitation (mm)' }, min: 0, max: 350 },
+                y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Temperature (°C)' }, min: -5, max: 40, grid: { drawOnChartArea: false } },
+            }
+        };
+
+        // GRAPH A: Cold & Wet (Modified)
+        const ctxA = document.getElementById('chartA').getContext('2d');
+        new Chart(ctxA, {
+            type: 'bar',
+            data: {
+                labels: ['J','F','M','A','M','J','J','A','S','O','N','D'],
+                datasets: [
+                    { label: 'Precipitation (mm)', data: [200, 190, 180, 170, 160, 150, 150, 160, 170, 180, 190, 200], backgroundColor: '#94a3b8', yAxisID: 'y', order: 2 },
+                    { label: 'Temperature (°C)', data: [4, 3, 2, 1, 0, -1, -1, 0, 1, 2, 3, 4], borderColor: '#3b82f6', backgroundColor: '#3b82f6', type: 'line', yAxisID: 'y1', tension: 0.4, order: 1 }
+                ]
+            }, options: commonOptions
+        });
+
+        // GRAPH B: Tropical Rainforest
+        const ctxB = document.getElementById('chartB').getContext('2d');
+        new Chart(ctxB, {
+            type: 'bar',
+            data: {
+                labels: ['J','F','M','A','M','J','J','A','S','O','N','D'],
+                datasets: [
+                    { label: 'Precipitation (mm)', data: [260, 280, 300, 290, 250, 220, 200, 210, 230, 250, 270, 280], backgroundColor: '#22c55e', yAxisID: 'y', order: 2 },
+                    { label: 'Temperature (°C)', data: [27, 27, 27, 27, 26, 26, 26, 26, 27, 27, 27, 27], borderColor: '#dc2626', backgroundColor: '#dc2626', type: 'line', yAxisID: 'y1', tension: 0.1, order: 1 }
+                ]
+            }, options: commonOptions
+        });
+
+    </script>
+</body>
+</html>
