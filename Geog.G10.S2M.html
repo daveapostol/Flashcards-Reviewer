@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geography Midterm Reviewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f9ff;
+        }
+        .slide-enter {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .slide-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+        ul.model-answer-list {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+        ul.model-answer-list li {
+            margin-bottom: 4px;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- Icons (Inline SVGs) ---
+        const Shuffle = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V21H16"/><path d="M3 21L9 15"/><path d="M21 3L15 9"/><path d="M16 3H21V8"/><path d="M3 3L21 21"/></svg>
+        );
+        const RefreshCw = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+        );
+        const BookOpen = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        );
+        const CheckCircle = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        );
+        const Lightbulb = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+        );
+        const CheckSquare = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        );
+
+        // --- Data & Content (Refactored for Granularity) ---
+
+        const QUESTION_DATA = [
+            // --- SECTION A BREAKDOWN ---
+            {
+                id: 'q1a',
+                section: 'A',
+                context: 'map',
+                title: 'Q1(a): Key components of GNI',
+                marks: 1,
+                placeholder: "What specific type of income is included in GNI but not GDP?",
+                writingTip: "Focus on the 'N' in GNI. Think about money coming into the country from outside.",
+                modelAnswer: "It is the total value of goods and services produced by a country (GDP) plus net income earned from abroad (money sent back by citizens or businesses working in other countries)."
+            },
+            {
+                id: 'q1b',
+                section: 'A',
+                context: 'map',
+                title: 'Q1(b): Calculating Per Capita',
+                marks: 1,
+                placeholder: "How do you calculate the 'per capita' figure?",
+                writingTip: "This is a math concept. What do you divide the total money by?",
+                modelAnswer: "Divide the total GNI by the total population of the country."
+            },
+            {
+                id: 'q2a',
+                section: 'A',
+                context: 'map',
+                title: 'Q2(a): Identifying Data (USA)',
+                marks: 1,
+                placeholder: "State the GNI per capita range for the USA.",
+                writingTip: "Look at the Key/Legend. Match the color of the USA to the box.",
+                modelAnswer: "$43,801 - $102,800"
+            },
+            {
+                id: 'q2b',
+                section: 'A',
+                context: 'map',
+                title: 'Q2(b): Identifying Data (Bolivia)',
+                marks: 1,
+                placeholder: "State the GNI per capita range for Bolivia.",
+                writingTip: "Look at the Key/Legend. Match the color of Bolivia (in South America) to the box.",
+                modelAnswer: "$400 - $6,200"
+            },
+            {
+                id: 'q2c',
+                section: 'A',
+                context: 'map',
+                title: 'Q2(c): Making Comparisons',
+                marks: 1,
+                placeholder: "Write a sentence comparing the two.",
+                writingTip: "Use comparative words like 'higher than', 'lower than', 'whereas', or 'in contrast to'.",
+                modelAnswer: "The USA has a significantly higher GNI per capita than Bolivia."
+            },
+            {
+                id: 'q3a',
+                section: 'A',
+                context: 'map',
+                title: 'Q3(a): Reasons for High GNI (Industry)',
+                marks: 1,
+                placeholder: "How does the type of industry affect GNI in an MEDC like the USA?",
+                writingTip: "Mention the 'sector' (Secondary/Tertiary) and the 'value' of goods.",
+                modelAnswer: "MEDCs have more tertiary (service) and quaternary (high-tech) industries which generate higher value/profit than agriculture."
+            },
+            {
+                id: 'q3b',
+                section: 'A',
+                context: 'map',
+                title: 'Q3(b): Reasons for High GNI (Workforce)',
+                marks: 1,
+                placeholder: "How does the workforce contribute to high GNI?",
+                writingTip: "Think about education and skills.",
+                modelAnswer: "The workforce is generally more skilled and educated, leading to higher productivity and wages."
+            },
+            {
+                id: 'q4a',
+                section: 'A',
+                context: 'map',
+                title: 'Q4(a): Social Indicators (Health)',
+                marks: 2,
+                placeholder: "Name a health indicator and explain what a high score means.",
+                writingTip: "Example: Life Expectancy. Explanation: Good healthcare system.",
+                modelAnswer: "Life Expectancy: A high age indicates good healthcare, diet, and sanitation systems."
+            },
+            {
+                id: 'q4b',
+                section: 'A',
+                context: 'map',
+                title: 'Q4(b): Social Indicators (Education)',
+                marks: 2,
+                placeholder: "Name an education indicator and explain its significance.",
+                writingTip: "Example: Literacy Rate. Explanation: Ability to work in skilled jobs.",
+                modelAnswer: "Adult Literacy Rate: A high percentage means the population can read/write, allowing for a skilled workforce."
+            },
+
+            // --- SECTION B BREAKDOWN ---
+            {
+                id: 'q5a',
+                section: 'B',
+                context: 'graph',
+                title: 'Q5(a): Primary Sector Trend',
+                marks: 1,
+                placeholder: "What happened to the Primary sector between 1930 and 2010?",
+                writingTip: "Use words like 'decreased', 'fell', 'dropped'. Quote the starting and ending % if possible.",
+                modelAnswer: "It decreased significantly from around 42% in 1930 to about 4% in 2010."
+            },
+            {
+                id: 'q5b',
+                section: 'B',
+                context: 'graph',
+                title: 'Q5(b): Tertiary Sector Trend',
+                marks: 1,
+                placeholder: "What happened to the Tertiary sector between 1930 and 2010?",
+                writingTip: "Use words like 'increased', 'rose', 'grew'.",
+                modelAnswer: "It increased steadily from around 40% to over 80%."
+            },
+            {
+                id: 'q5c',
+                section: 'B',
+                context: 'graph',
+                title: 'Q5(c): Secondary Sector Pattern',
+                marks: 1,
+                placeholder: "Describe the specific shape of the Secondary sector line.",
+                writingTip: "Did it go just up or down? Or did it change direction?",
+                modelAnswer: "It rose to a peak around 1970 (industrialization) and then decreased afterwards (deindustrialization)."
+            },
+            {
+                id: 'q6a',
+                section: 'B',
+                context: 'graph',
+                title: 'Q6(a): Explaining Primary Decline',
+                marks: 2,
+                placeholder: "Why do fewer people work in agriculture as a country develops?",
+                writingTip: "Think about technology on farms.",
+                modelAnswer: "Mechanization (tractors/machines) replaces human labor, meaning fewer workers are needed to produce food."
+            },
+            {
+                id: 'q6b',
+                section: 'B',
+                context: 'graph',
+                title: 'Q6(b): Explaining Tertiary Growth',
+                marks: 2,
+                placeholder: "Why do more people work in services as a country develops?",
+                writingTip: "Think about what people spend money on when they get richer.",
+                modelAnswer: "As people become wealthier, they have more disposable income to spend on services like tourism, healthcare, and retail."
+            },
+
+            // --- SECTION C BREAKDOWN ---
+            {
+                id: 'q7a',
+                section: 'C',
+                context: 'none',
+                title: 'Q7(a): Case Study Knowledge',
+                marks: 1,
+                placeholder: "Name a specific TNC and a country where it operates.",
+                writingTip: "Do not just say 'Nike'. Say 'Nike in Vietnam' or 'Toyota in the UK'.",
+                modelAnswer: "Example: Nike (in Vietnam) OR Coca-Cola (in India)."
+            },
+            {
+                id: 'q7b',
+                section: 'C',
+                context: 'none',
+                title: 'Q7(b): Positive Impacts',
+                marks: 3,
+                placeholder: "List 3 specific positive things the TNC brought to the country.",
+                writingTip: "Think: Jobs, Roads, Skills.",
+                modelAnswer: "1. Created thousands of jobs. 2. Improved infrastructure (roads/power) to support factories. 3. Brought new skills and technology to the workforce."
+            },
+            {
+                id: 'q7c',
+                section: 'C',
+                context: 'none',
+                title: 'Q7(c): Negative Impacts',
+                marks: 3,
+                placeholder: "List 3 specific negative things the TNC caused.",
+                writingTip: "Think: Money leaving, Working conditions, Environment.",
+                modelAnswer: "1. Leakage of profits (money goes back to HQ, not locals). 2. Potential for exploitation (low wages/long hours). 3. Environmental pollution is often less regulated."
+            },
+
+            // --- SECTION D (GAME) ---
+            {
+                id: 'q8',
+                section: 'D',
+                context: 'none',
+                type: 'game',
+                title: 'Review Activity: Sector Matching',
+                marks: 5
+            }
+        ];
+
+        // --- Components ---
+
+        const AmericasMap = () => {
+            const [hovered, setHovered] = useState(null);
+
+            return (
+                <div className="relative w-full h-96 bg-blue-50 rounded-xl overflow-hidden border-2 border-blue-200 shadow-inner flex items-center justify-center mb-4">
+                     <div className="absolute top-2 left-2 bg-white/80 p-1 px-2 rounded text-xs text-blue-800 font-bold border border-blue-100 z-20">
+                        Fig. 1: GNI per capita
+                    </div>
+                    <svg viewBox="0 0 400 600" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+                        {/* Ocean Background */}
+                        <rect width="400" height="600" fill="#e0f2fe" />
+                        
+                        {/* North America Group */}
+                        <g transform="translate(0, 20)">
+                            {/* Canada/North (Greyed out/Background context) */}
+                            <path 
+                                d="M 50,40 L 120,20 L 240,20 L 280,60 L 260,100 L 60,100 Z" 
+                                fill="#cbd5e1" 
+                                stroke="#94a3b8" 
+                                strokeWidth="1"
+                            />
+                            
+                            {/* USA (Highlighted Region) */}
+                            <g 
+                                onMouseEnter={() => setHovered('usa')} 
+                                onMouseLeave={() => setHovered(null)}
+                                className="cursor-pointer transition-opacity duration-300 hover:opacity-90"
+                            >
+                                {/* Mainland USA */}
+                                <path 
+                                    d="M 60,100 L 260,100 L 270,140 L 240,180 L 200,170 L 160,190 L 60,160 Z" 
+                                    fill="#ef4444" 
+                                    stroke="#b91c1c" 
+                                    strokeWidth="2"
+                                />
+                                {/* Alaska */}
+                                <path 
+                                    d="M 10,40 L 50,40 L 50,80 L 20,70 Z" 
+                                    fill="#ef4444" 
+                                    stroke="#b91c1c" 
+                                    strokeWidth="2"
+                                />
+                                <text x="160" y="145" fill="white" fontWeight="bold" fontSize="14" textAnchor="middle" style={{textShadow: "1px 1px 2px #b91c1c"}}>USA</text>
+                            </g>
+                            
+                            {/* Mexico/Central America (Context) */}
+                            <path 
+                                d="M 160,190 L 200,170 L 220,220 L 240,260 L 210,240 Z" 
+                                fill="#f97316" 
+                                stroke="#ea580c" 
+                                strokeWidth="1"
+                            />
+                        </g>
+
+                        {/* South America Group */}
+                        <g transform="translate(10, 20)">
+                            {/* Continent Base (Light Green / Medium Income) */}
+                            <path 
+                                d="M 210,240 L 270,250 L 320,300 L 340,360 L 260,540 L 220,560 L 180,450 L 170,350 L 200,280 Z" 
+                                fill="#86efac" 
+                                stroke="#166534" 
+                                strokeWidth="2"
+                            />
+                            
+                            {/* Bolivia (Highlighted Landlocked) */}
+                            <g 
+                                onMouseEnter={() => setHovered('bolivia')} 
+                                onMouseLeave={() => setHovered(null)}
+                                className="cursor-pointer transition-opacity duration-300 hover:opacity-90"
+                            >
+                                <path 
+                                    d="M 220,360 L 260,360 L 270,390 L 240,410 L 215,400 Z" 
+                                    fill="#15803d" 
+                                    stroke="white" 
+                                    strokeWidth="2"
+                                />
+                                {/* Pointer Line for Bolivia */}
+                                <line x1="225" y1="380" x2="160" y2="380" stroke="#15803d" strokeWidth="2" />
+                                <circle cx="225" cy="380" r="2" fill="#15803d" />
+                                <text x="155" y="385" textAnchor="end" fontSize="14" fontWeight="bold" fill="#15803d" style={{textShadow: "1px 1px 0px white"}}>Bolivia</text>
+                            </g>
+                            <text x="280" y="440" fill="#166534" fontWeight="bold" fontSize="14" textAnchor="middle" opacity="0.7">S. America</text>
+                        </g>
+
+                        {/* Legend */}
+                        <g transform="translate(20, 460)">
+                            <rect width="150" height="130" fill="white" stroke="#94a3b8" rx="8" shadow="true" />
+                            <text x="10" y="25" fontSize="12" fontWeight="bold" fill="#334155">GNI Per Capita ($US)</text>
+                            
+                            <g transform="translate(10, 40)">
+                                <rect width="20" height="15" fill="#ef4444" rx="2" />
+                                <text x="30" y="12" fontSize="10" fill="#475569">43,801 - 102,800 (High)</text>
+                            </g>
+                            
+                            <g transform="translate(10, 60)">
+                                <rect width="20" height="15" fill="#f97316" rx="2" />
+                                <text x="30" y="12" fontSize="10" fill="#475569">26,201 - 43,800</text>
+                            </g>
+                            
+                            <g transform="translate(10, 80)">
+                                <rect width="20" height="15" fill="#86efac" rx="2" />
+                                <text x="30" y="12" fontSize="10" fill="#475569">13,301 - 26,200</text>
+                            </g>
+
+                            <g transform="translate(10, 100)">
+                                <rect width="20" height="15" fill="#15803d" rx="2" />
+                                <text x="30" y="12" fontSize="10" fill="#475569">400 - 6,200 (Low)</text>
+                            </g>
+                        </g>
+                    </svg>
+
+                    {/* Tooltips */}
+                    {hovered === 'usa' && (
+                        <div className="absolute top-1/4 left-1/4 bg-white p-3 rounded-lg shadow-xl border-l-4 border-red-500 z-10 animate-fade-in pointer-events-none">
+                            <h3 className="font-bold text-red-600 flex items-center gap-2">
+                                🇺🇸 USA (MEDC)
+                            </h3>
+                            <p className="text-sm font-semibold">GNI: High Income</p>
+                            <p className="text-xs text-gray-500">More Economically Developed</p>
+                        </div>
+                    )}
+                    {hovered === 'bolivia' && (
+                        <div className="absolute top-1/2 left-10 bg-white p-3 rounded-lg shadow-xl border-l-4 border-green-700 z-10 animate-fade-in pointer-events-none">
+                            <h3 className="font-bold text-green-700 flex items-center gap-2">
+                                🇧🇴 Bolivia (LEDC)
+                            </h3>
+                            <p className="text-sm font-semibold">GNI: Low Income</p>
+                            <p className="text-xs text-gray-500">Less Economically Developed</p>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const EmploymentGraph = () => {
+            const [year, setYear] = useState(null);
+            
+            const data = [
+                { year: 1930, pri: 42, sec: 18, ter: 40 },
+                { year: 1940, pri: 38, sec: 25, ter: 37 },
+                { year: 1950, pri: 30, sec: 30, ter: 40 },
+                { year: 1960, pri: 20, sec: 35, ter: 45 },
+                { year: 1970, pri: 15, sec: 38, ter: 47 },
+                { year: 1980, pri: 5,  sec: 25, ter: 70 },
+                { year: 1990, pri: 4,  sec: 25, ter: 71 },
+                { year: 2000, pri: 4,  sec: 18, ter: 78 },
+                { year: 2010, pri: 4,  sec: 15, ter: 81 },
+            ];
+
+            const width = 600;
+            const height = 300;
+            const padding = 40;
+            const contentW = width - padding * 2;
+            const contentH = height - padding * 2;
+
+            const getX = (yr) => padding + ((yr - 1930) / (2010 - 1930)) * contentW;
+            const getY = (val) => height - padding - (val / 100) * contentH;
+            const makePath = (key) => data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${getX(d.year)} ${getY(d[key])}`).join(' ');
+
+            return (
+                <div className="relative w-full overflow-x-auto bg-white rounded-xl shadow p-4 border border-gray-200 mb-4">
+                     <div className="absolute top-2 right-2 bg-gray-100 p-1 px-2 rounded text-xs text-gray-600 font-bold">
+                        Fig. 2: Employment
+                    </div>
+                    <h4 className="text-center font-bold text-gray-700 mb-2 text-sm">Changes in Employment Structure (1930 - 2010)</h4>
+                    <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="min-w-[500px]">
+                        {[0, 20, 40, 60, 80, 100].map(val => (
+                            <g key={val}>
+                                <line x1={padding} y1={getY(val)} x2={width - padding} y2={getY(val)} stroke="#eee" />
+                                <text x={padding - 10} y={getY(val) + 4} textAnchor="end" fontSize="10" fill="#888">{val}%</text>
+                            </g>
+                        ))}
+                        {data.map(d => (
+                            <text key={d.year} x={getX(d.year)} y={height - 10} textAnchor="middle" fontSize="10" fill="#666">{d.year}</text>
+                        ))}
+                        <path d={makePath('pri')} fill="none" stroke="#0ea5e9" strokeWidth="3" />
+                        <path d={makePath('sec')} fill="none" stroke="#16a34a" strokeWidth="3" />
+                        <path d={makePath('ter')} fill="none" stroke="#dc2626" strokeWidth="3" />
+                        {data.map((d) => (
+                            <g key={d.year} onMouseEnter={() => setYear(d)} onMouseLeave={() => setYear(null)}>
+                                <circle cx={getX(d.year)} cy={getY(d.pri)} r="6" fill="#0ea5e9" className="opacity-0 hover:opacity-100" />
+                                <circle cx={getX(d.year)} cy={getY(d.sec)} r="6" fill="#16a34a" className="opacity-0 hover:opacity-100" />
+                                <circle cx={getX(d.year)} cy={getY(d.ter)} r="6" fill="#dc2626" className="opacity-0 hover:opacity-100" />
+                                <rect x={getX(d.year) - 10} y={padding} width="20" height={contentH} fill="transparent" className="cursor-crosshair" />
+                            </g>
+                        ))}
+                    </svg>
+                    <div className="flex justify-center gap-4 mt-2 text-sm">
+                        <div className="flex items-center"><div className="w-3 h-3 bg-sky-500 mr-1 rounded-full"></div> Primary</div>
+                        <div className="flex items-center"><div className="w-3 h-3 bg-green-600 mr-1 rounded-full"></div> Secondary</div>
+                        <div className="flex items-center"><div className="w-3 h-3 bg-red-600 mr-1 rounded-full"></div> Tertiary</div>
+                    </div>
+                    {year && (
+                        <div className="absolute top-8 right-8 bg-white/95 p-2 rounded shadow border text-xs z-10">
+                            <div className="font-bold">{year.year}</div>
+                            <div className="text-red-600">Ter: {year.ter}%</div>
+                            <div className="text-green-600">Sec: {year.sec}%</div>
+                            <div className="text-sky-600">Pri: {year.pri}%</div>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        const MatchingGame = () => {
+            const initialItems = [
+                { id: 't1', text: 'Agriculture', type: 'primary' },
+                { id: 't2', text: 'Social Services', type: 'tertiary' },
+                { id: 't3', text: 'Manufacturing', type: 'secondary' },
+                { id: 't4', text: 'Gas, Electricity, Water', type: 'secondary' },
+                { id: 't5', text: 'Finance', type: 'tertiary' },
+            ];
+            const [items, setItems] = useState(initialItems);
+            const [matches, setMatches] = useState({});
+            const [message, setMessage] = useState('');
+            const bins = ['primary', 'secondary', 'tertiary']; 
+
+            const handleDrop = (e, bin) => {
+                e.preventDefault();
+                const itemId = e.dataTransfer.getData("text");
+                const item = initialItems.find(i => i.id === itemId);
+                if (item) {
+                    let isCorrect = (bin === item.type);
+                    if(isCorrect) {
+                        setMatches(prev => ({...prev, [itemId]: bin}));
+                        setItems(prev => prev.filter(i => i.id !== itemId));
+                        setMessage('Correct Match!');
+                        setTimeout(() => setMessage(''), 1000);
+                    } else {
+                        setMessage('Try again!');
+                        setTimeout(() => setMessage(''), 1000);
+                    }
+                }
+            };
+            
+            const reset = () => { setItems(initialItems); setMatches({}); setMessage(''); }
+
+            return (
+                <div className="bg-white p-6 rounded-xl shadow-lg border border-purple-100">
+                    <div className="flex justify-between items-center mb-4">
+                         <h3 className="font-bold text-lg text-purple-800">Review Activity</h3>
+                         <button onClick={reset} className="text-xs bg-gray-200 px-2 py-1 rounded hover:bg-gray-300">Reset</button>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-4">Drag the employment examples to the correct sector box.</p>
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                        {bins.map(bin => (
+                            <div key={bin} onDragOver={(e) => e.preventDefault()} onDrop={(e) => handleDrop(e, bin)}
+                                className="h-24 bg-purple-50 border-2 border-dashed border-purple-300 rounded-lg flex flex-col items-center justify-center">
+                                <span className="font-bold uppercase text-purple-400 text-xs mb-1">{bin}</span>
+                                <div className="flex flex-wrap justify-center gap-1 p-1 w-full">
+                                    {Object.entries(matches).filter(([id, b]) => b === bin).map(([id, b]) => {
+                                        const item = initialItems.find(i => i.id === id);
+                                        return <span key={id} className="text-[10px] bg-purple-600 text-white px-1 py-0.5 rounded shadow-sm">{item.text}</span>
+                                    })}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex gap-2 flex-wrap min-h-[40px] p-2 bg-gray-50 rounded border justify-center">
+                        {items.map(item => (
+                            <div key={item.id} draggable onDragStart={(e) => e.dataTransfer.setData("text", item.id)}
+                                className="cursor-grab active:cursor-grabbing bg-white border border-gray-300 px-3 py-1 rounded shadow-sm hover:shadow-md text-sm">
+                                {item.text}
+                            </div>
+                        ))}
+                        {items.length === 0 && <span className="text-green-600 font-bold text-sm">All matched!</span>}
+                    </div>
+                    {message && <div className="text-center mt-2 font-bold text-orange-500 text-sm">{message}</div>}
+                </div>
+            );
+        };
+
+        const QuestionCard = ({ question, isOpen, onToggle }) => {
+            return (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 overflow-hidden fade-in">
+                    <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
+                        <h3 className="font-semibold text-gray-800 text-lg">{question.title} <span className="text-gray-500 text-sm ml-2">[{question.marks} marks]</span></h3>
+                    </div>
+                    <div className="p-4">
+                        {question.type === 'game' ? (
+                            <MatchingGame />
+                        ) : (
+                            <React.Fragment>
+                                {question.type === 'inputs' ? (
+                                    <div className="grid grid-cols-1 gap-2 mb-4">
+                                        <input className="w-full p-2 border rounded" placeholder="Indicator 1 + Explanation" />
+                                        <input className="w-full p-2 border rounded" placeholder="Indicator 2 + Explanation" />
+                                    </div>
+                                ) : question.type === 'essay' ? (
+                                    <React.Fragment>
+                                        <input className="w-full p-2 border rounded mb-2 font-bold" placeholder="Name of TNC and Area (e.g., Nike in Vietnam)" />
+                                        <textarea className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400 outline-none" rows={question.rows || 3} placeholder={question.placeholder}></textarea>
+                                    </React.Fragment>
+                                ) : (
+                                    <textarea className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400 outline-none" rows={question.rows || 3} placeholder={question.placeholder}></textarea>
+                                )}
+                                
+                                <div className="mt-4">
+                                    <button onClick={onToggle}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded text-sm font-medium transition-colors ${isOpen ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                                        {isOpen ? 'Hide Model Answer' : 'Show Model Answer'}
+                                    </button>
+                                    
+                                    {isOpen && (
+                                        <div className="mt-4 grid grid-cols-1 gap-4 animate-fade-in">
+                                            {/* WRITING TIP SECTION */}
+                                            {question.writingTip && (
+                                                <div className="p-4 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-sm">
+                                                    <div className="flex items-center gap-2 mb-2 font-bold text-amber-700">
+                                                        <Lightbulb size={18} /> 💡 Exam Tip: How to Answer
+                                                    </div>
+                                                    <p>{question.writingTip}</p>
+                                                </div>
+                                            )}
+
+                                            {/* MODEL ANSWER SECTION */}
+                                            <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-100 text-indigo-900 text-sm">
+                                                <div className="flex items-center gap-2 mb-2 font-bold text-indigo-800">
+                                                    <CheckSquare size={18} /> ✅ Model Answer
+                                                </div>
+                                                {question.modelAnswer}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </React.Fragment>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // --- Main App ---
+
+        const App = () => {
+            const [viewMode, setViewMode] = useState('list'); // 'list' or 'quiz'
+            const [openQ, setOpenQ] = useState(null); // For List Mode
+            
+            // Quiz State
+            const [quizQuestions, setQuizQuestions] = useState([]);
+            const [currentQIndex, setCurrentQIndex] = useState(0);
+            const [showAnswerQuiz, setShowAnswerQuiz] = useState(false);
+
+            const toggleQ = (id) => setOpenQ(openQ === id ? null : id);
+
+            const startQuiz = () => {
+                // Fisher-Yates Shuffle
+                const shuffled = [...QUESTION_DATA];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                setQuizQuestions(shuffled);
+                setCurrentQIndex(0);
+                setShowAnswerQuiz(false);
+                setViewMode('quiz');
+            };
+
+            const nextQuestion = () => {
+                if (currentQIndex < quizQuestions.length - 1) {
+                    setCurrentQIndex(prev => prev + 1);
+                    setShowAnswerQuiz(false);
+                } else {
+                    // Finished
+                    alert("Quiz Completed! Returning to menu.");
+                    setViewMode('list');
+                }
+            };
+
+            const renderContext = (contextType) => {
+                if (contextType === 'map') return <AmericasMap />;
+                if (contextType === 'graph') return <EmploymentGraph />;
+                return null;
+            };
+
+            return (
+                <div className="min-h-screen pb-12 bg-slate-50">
+                    {/* Header */}
+                    <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 shadow-lg sticky top-0 z-50">
+                        <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div>
+                                <h1 className="text-2xl font-bold">IGCSE Geography Reviewer</h1>
+                                <p className="text-blue-200 text-sm">Midterm Exam Prep | Grade 10</p>
+                            </div>
+                            
+                            <div className="flex gap-2 bg-white/10 p-1 rounded-lg">
+                                <button 
+                                    onClick={() => setViewMode('list')}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded transition-all ${viewMode === 'list' ? 'bg-white text-blue-900 shadow font-bold' : 'text-white hover:bg-white/20'}`}
+                                >
+                                    <BookOpen size={18} /> Full Review
+                                </button>
+                                <button 
+                                    onClick={startQuiz}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded transition-all ${viewMode === 'quiz' ? 'bg-white text-blue-900 shadow font-bold' : 'text-white hover:bg-white/20'}`}
+                                >
+                                    <Shuffle size={18} /> Scrambled Quiz
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="max-w-4xl mx-auto p-4 space-y-8 mt-4">
+                        
+                        {/* LIST MODE (Original) */}
+                        {viewMode === 'list' && (
+                            <div className="animate-fade-in space-y-8">
+                                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded text-yellow-800 text-sm">
+                                    <strong>Tip:</strong> Use "Full Review" to study systematically. Use "Scrambled Quiz" to test yourself without memorizing the order!
+                                </div>
+
+                                {/* Iterate sections strictly for List View */}
+                                <section>
+                                    <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                                        <span className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">A</span>
+                                        <h2 className="text-xl font-bold text-gray-800">Development Indicators</h2>
+                                    </div>
+                                    <AmericasMap />
+                                    {QUESTION_DATA.filter(q => q.section === 'A').map(q => (
+                                        <QuestionCard key={q.id} question={q} isOpen={openQ === q.id} onToggle={() => toggleQ(q.id)} />
+                                    ))}
+                                </section>
+
+                                <section>
+                                    <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                                        <span className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">B</span>
+                                        <h2 className="text-xl font-bold text-gray-800">Employment Structure</h2>
+                                    </div>
+                                    <EmploymentGraph />
+                                    {QUESTION_DATA.filter(q => q.section === 'B').map(q => (
+                                        <QuestionCard key={q.id} question={q} isOpen={openQ === q.id} onToggle={() => toggleQ(q.id)} />
+                                    ))}
+                                </section>
+
+                                <section>
+                                    <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                                        <span className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">C</span>
+                                        <h2 className="text-xl font-bold text-gray-800">Transnational Corporations</h2>
+                                    </div>
+                                    {QUESTION_DATA.filter(q => q.section === 'C').map(q => (
+                                        <QuestionCard key={q.id} question={q} isOpen={openQ === q.id} onToggle={() => toggleQ(q.id)} />
+                                    ))}
+                                </section>
+
+                                <section>
+                                    <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                                        <span className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">D</span>
+                                        <h2 className="text-xl font-bold text-gray-800">Activity</h2>
+                                    </div>
+                                    {QUESTION_DATA.filter(q => q.section === 'D').map(q => (
+                                        <QuestionCard key={q.id} question={q} isOpen={openQ === q.id} onToggle={() => toggleQ(q.id)} />
+                                    ))}
+                                </section>
+                            </div>
+                        )}
+
+                        {/* QUIZ MODE (Randomized) */}
+                        {viewMode === 'quiz' && quizQuestions.length > 0 && (
+                            <div className="animate-fade-in max-w-2xl mx-auto">
+                                <div className="flex justify-between items-center mb-6">
+                                    <span className="text-gray-500 font-bold">Question {currentQIndex + 1} of {quizQuestions.length}</span>
+                                    <button onClick={startQuiz} className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1 text-sm font-bold">
+                                        <RefreshCw size={14}/> Re-Shuffle
+                                    </button>
+                                </div>
+
+                                {/* Progress Bar */}
+                                <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                                    <div className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style={{ width: `${((currentQIndex + 1) / quizQuestions.length) * 100}%` }}></div>
+                                </div>
+
+                                {/* Context (Map/Graph) - Only shows if needed for CURRENT question */}
+                                <div className="mb-4">
+                                    {renderContext(quizQuestions[currentQIndex].context)}
+                                </div>
+
+                                {/* Question Card */}
+                                <div className="transition-all duration-500">
+                                    <QuestionCard 
+                                        question={quizQuestions[currentQIndex]} 
+                                        isOpen={showAnswerQuiz} 
+                                        onToggle={() => setShowAnswerQuiz(!showAnswerQuiz)} 
+                                    />
+                                </div>
+
+                                {/* Controls */}
+                                <div className="flex justify-end mt-4">
+                                    <button 
+                                        onClick={nextQuestion}
+                                        className="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all flex items-center gap-2"
+                                    >
+                                        {currentQIndex < quizQuestions.length - 1 ? 'Next Question' : 'Finish Quiz'} <CheckCircle size={20}/>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geography Midterm Reviewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f9ff;
+        }
+        .slide-enter {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .slide-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+        ul.model-answer-list {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+        ul.model-answer-list li {
+            margin-bottom: 4px;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- Icons (Inline SVGs) ---
+        const Shuffle = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V21H16"/><path d="M3 21L9 15"/><path d="M21 3L15 9"/><path d="M16 3H21V8"/><path d="M3 3L21 21"/></svg>
+        );
+        const RefreshCw = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+        );
+        const BookOpen = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        );
+        const CheckCircle = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        );
+        const Lightbulb = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+        );
+        const CheckSquare = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        );
+
+        // --- Data & Content (Refactored for Granularity) ---
+
+        const QUESTION_DATA = [
+            // --- SECTION A BREAKDOWN ---
+            {
+                id: 'q1a',
+                section: 'A',
+                context: 'map',
+                title: 'Q1(a): Key components of GNI',
+                marks: 1,
+                placeholder: "What specific type of income is included in GNI but not GDP?",
+                writingTip: "Focus on the 'N' in GNI. Think about money coming into the country from outside.",
+                modelAnswer: "It is the total value of goods and services produced by a country (GDP) plus net income earned from abroad (money sent back by citizens or businesses working in other countries)."
+            },
+            {
+                id: 'q1b',
+                section: 'A',
+                context: 'map',
+                title: 'Q1(b): Calculating Per Capita',
+                marks: 1,
+                placeholder: "How do you calculate the 'per capita' figure?",
+                writingTip: "This is a math concept. What do you divide the total money by?",
+                modelAnswer: "Divide the total GNI by the total population of the country."
+            },
+            {
+                id: 'q2a',
+                section: 'A',
+                context: 'map',
+                title: 'Q2(a): Identifying Data (USA)',
+                marks: 1,
+                placeholder: "State the GNI per capita range for the USA.",
+                writingTip: "Look at the Key/Legend. Match the color of the USA to the box.",
+                modelAnswer: "$43,801 - $102,800"
+            },
+            {
+                id: 'q2b',
+                section: 'A',
+                context: 'map',
+                title: 'Q2(b): Identifying Data (Bolivia)',
+                marks: 1,
+                placeholder: "State the GNI per capita range for Bolivia.",
+                writingTip: "Look at the Key/Legend. Match the color of Bolivia (in South America) to the box.",
+                modelAnswer: "$400 - $6,200"
+            },
+            {
+                id: 'q2c',
+                section: 'A',
+                context: 'map',
+                title: 'Q2(c): Making Comparisons',
+                marks: 1,
+                placeholder: "Write a sentence comparing the two.",
+                writingTip: "Use comparative words like 'higher than', 'lower than', 'whereas', or 'in contrast to'.",
+                modelAnswer: "The USA has a significantly higher GNI per capita than Bolivia."
+            },
+            {
+                id: 'q3a',
+                section: 'A',
+                context: 'map',
+                title: 'Q3(a): Reasons for High GNI (Industry)',
+                marks: 1,
+                placeholder: "How does the type of industry affect GNI in an MEDC like the USA?",
+                writingTip: "Mention the 'sector' (Secondary/Tertiary) and the 'value' of goods.",
+                modelAnswer: "MEDCs have more tertiary (service) and quaternary (high-tech) industries which generate higher value/profit than agriculture."
+            },
+            {
+                id: 'q3b',
+                section: 'A',
+                context: 'map',
+                title: 'Q3(b): Reasons for High GNI (Workforce)',
+                marks: 1,
+                placeholder: "How does the workforce contribute to high GNI?",
+                writingTip: "Think about education and skills.",
+                modelAnswer: "The workforce is generally more skilled and educated, leading to higher productivity and wages."
+            },
+            {
+                id: 'q4a',
+                section: 'A',
+                context: 'map',
+                title: 'Q4(a): Social Indicators (Health)',
+                marks: 2,
+                placeholder: "Name a health indicator and explain what a high score means.",
+                writingTip: "Example: Life Expectancy. Explanation: Good healthcare system.",
+                modelAnswer: "Life Expectancy: A high age indicates good healthcare, diet, and sanitation systems."
+            },
+            {
+                id: 'q4b',
+                section: 'A',
+                context: 'map',
+                title: 'Q4(b): Social Indicators (Education)',
+                marks: 2,
+                placeholder: "Name an education indicator and explain its significance.",
+                writingTip: "Example: Literacy Rate. Explanation: Ability to work in skilled jobs.",
+                modelAnswer: "Adult Literacy Rate: A high percentage means the population can read/write, allowing for a skilled workforce."
+            },
+
+            // --- SECTION B BREAKDOWN ---
+            {
+                id: 'q5a',
+                section: 'B',
+                context: 'graph',
+                title: 'Q5(a): Primary Sector Trend',
+                marks: 1,
+                placeholder: "What happened to the Primary sector between 1930 and 2010?",
+                writingTip: "Use words like 'decreased', 'fell', 'dropped'. Quote the starting and ending % if possible.",
+                modelAnswer: "It decreased significantly from around 42% in 1930 to about 4% in 2010."
+            },
+            {
+                id: 'q5b',
+                section: 'B',
+                context: 'graph',
+                title: 'Q5(b): Tertiary Sector Trend',
+                marks: 1,
+                placeholder: "What happened to the Tertiary sector between 1930 and 2010?",
+                writingTip: "Use words like 'increased', 'rose', 'grew'.",
+                modelAnswer: "It increased steadily from around 40% to over 80%."
+            },
+            {
+                id: 'q5c',
+                section: 'B',
+                context: 'graph',
+                title: 'Q5(c): Secondary Sector Pattern',
+                marks: 1,
+                placeholder: "Describe the specific shape of the Secondary sector line.",
+                writingTip: "Did it go just up or down? Or did it change direction?",
+                modelAnswer: "It rose to a peak around 1970 (industrialization) and then decreased afterwards (deindustrialization)."
+            },
+            {
+                id: 'q6a',
+                section: 'B',
+                context: 'graph',
+                title: 'Q6(a): Explaining Primary Decline',
+                marks: 2,
+                placeholder: "Why do fewer people work in agriculture as a country develops?",
+                writingTip: "Think about technology on farms.",
+                modelAnswer: "Mechanization (tractors/machines) replaces human labor, meaning fewer workers are needed to produce food."
+            },
+            {
+                id: 'q6b',
+                section: 'B',
+                context: 'graph',
+                title: 'Q6(b): Explaining Tertiary Growth',
+                marks: 2,
+                placeholder: "Why do more people work in services as a country develops?",
+                writingTip: "Think about what people spend money on when they get richer.",
+                modelAnswer: "As people become wealthier, they have more disposable income to spend on services like tourism, healthcare, and retail."
+            },
+
+            // --- SECTION C BREAKDOWN ---
+            {
+                id: 'q7a',
+                section: 'C',
+                context: 'none',
+                title: 'Q7(a): Case Study Knowledge',
+                marks: 1,
+                placeholder: "Name a specific TNC and a country where it operates.",
+                writingTip: "Do not just say 'Nike'. Say 'Nike in Vietnam' or 'Toyota in the UK'.",
+                modelAnswer: "Example: Nike (in Vietnam) OR Coca-Cola (in India)."
+            },
+            {
+                id: 'q7b',
+                section: 'C',
+                context: 'none',
+                title: 'Q7(b): Positive Impacts',
+                marks: 3,
+                placeholder: "List 3 specific positive things the TNC brought to the country.",
+                writingTip: "Think: Jobs, Roads, Skills.",
+                modelAnswer: "1. Created thousands of jobs. 2. Improved infrastructure (roads/power) to support factories. 3. Brought new skills and technology to the workforce."
+            },
+            {
+                id: 'q7c',
+                section: 'C',
+                context: 'none',
+                title: 'Q7(c): Negative Impacts',
+                marks: 3,
+                placeholder: "List 3 specific negative things the TNC caused.",
+                writingTip: "Think: Money leaving, Working conditions, Environment.",
+                modelAnswer: "1. Leakage of profits (money goes back to HQ, not locals). 2. Potential for exploitation (low wages/long hours). 3. Environmental pollution is often less regulated."
+            },
+
+            // --- SECTION D (GAME) ---
+            {
+                id: 'q8',
+                section: 'D',
+                context: 'none',
+                type: 'game',
+                title: 'Review Activity: Sector Matching',
+                marks: 5
+            }
+        ];
+
+        // --- Components ---
+
+        const AmericasMap = () => {
+            const [hovered, setHovered] = useState(null);
+
+            return (
+                <div className="relative w-full h-96 bg-blue-50 rounded-xl overflow-hidden border-2 border-blue-200 shadow-inner flex items-center justify-center mb-4">
+                     <div className="absolute top-2 left-2 bg-white/80 p-1 px-2 rounded text-xs text-blue-800 font-bold border border-blue-100 z-20">
+                        Fig. 1: GNI per capita
+                    </div>
+                    <svg viewBox="0 0 400 600" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+                        {/* Ocean Background */}
+                        <rect width="400" height="600" fill="#e0f2fe" />
+                        
+                        {/* North America Group */}
+                        <g transform="translate(0, 20)">
+                            {/* Canada/North (Greyed out/Background context) */}
+                            <path 
+                                d="M 50,40 L 120,20 L 240,20 L 280,60 L 260,100 L 60,100 Z" 
+                                fill="#cbd5e1" 
+                                stroke="#94a3b8" 
+                                strokeWidth="1"
+                            />
+                            
+                            {/* USA (Highlighted Region) */}
+                            <g 
+                                onMouseEnter={() => setHovered('usa')} 
+                                onMouseLeave={() => setHovered(null)}
+                                className="cursor-pointer transition-opacity duration-300 hover:opacity-90"
+                            >
+                                {/* Mainland USA */}
+                                <path 
+                                    d="M 60,100 L 260,100 L 270,140 L 240,180 L 200,170 L 160,190 L 60,160 Z" 
+                                    fill="#ef4444" 
+                                    stroke="#b91c1c" 
+                                    strokeWidth="2"
+                                />
+                                {/* Alaska */}
+                                <path 
+                                    d="M 10,40 L 50,40 L 50,80 L 20,70 Z" 
+                                    fill="#ef4444" 
+                                    stroke="#b91c1c" 
+                                    strokeWidth="2"
+                                />
+                                <text x="160" y="145" fill="white" fontWeight="bold" fontSize="14" textAnchor="middle" style={{textShadow: "1px 1px 2px #b91c1c"}}>USA</text>
+                            </g>
+                            
+                            {/* Mexico/Central America (Context) */}
+                            <path 
+                                d="M 160,190 L 200,170 L 220,220 L 240,260 L 210,240 Z" 
+                                fill="#f97316" 
+                                stroke="#ea580c" 
+                                strokeWidth="1"
+                            />
+                        </g>
+
+                        {/* South America Group */}
+                        <g transform="translate(10, 20)">
+                            {/* Continent Base (Light Green / Medium Income) */}
+                            <path 
+                                d="M 210,240 L 270,250 L 320,300 L 340,360 L 260,540 L 220,560 L 180,450 L 170,350 L 200,280 Z" 
+                                fill="#86efac" 
+                                stroke="#166534" 
+                                strokeWidth="2"
+                            />
+                            
+                            {/* Bolivia (Highlighted Landlocked) */}
+                            <g 
+                                onMouseEnter={() => setHovered('bolivia')} 
+                                onMouseLeave={() => setHovered(null)}
+                                className="cursor-pointer transition-opacity duration-300 hover:opacity-90"
+                            >
+                                <path 
+                                    d="M 220,360 L 260,360 L 270,390 L 240,410 L 215,400 Z" 
+                                    fill="#15803d" 
+                                    stroke="white" 
+                                    strokeWidth="2"
+                                />
+                                {/* Pointer Line for Bolivia */}
+                                <line x1="225" y1="380" x2="160" y2="380" stroke="#15803d" strokeWidth="2" />
+                                <circle cx="225" cy="380" r="2" fill="#15803d" />
+                                <text x="155" y="385" textAnchor="end" fontSize="14" fontWeight="bold" fill="#15803d" style={{textShadow: "1px 1px 0px white"}}>Bolivia</text>
+                            </g>
+                            <text x="280" y="440" fill="#166534" fontWeight="bold" fontSize="14" textAnchor="middle" opacity="0.7">S. America</text>
+                        </g>
+
+                        {/* Legend */}
+                        <g transform="translate(20, 460)">
+                            <rect width="150" height="130" fill="white" stroke="#94a3b8" rx="8" shadow="true" />
+                            <text x="10" y="25" fontSize="12" fontWeight="bold" fill="#334155">GNI Per Capita ($US)</text>
+                            
+                            <g transform="translate(10, 40)">
+                                <rect width="20" height="15" fill="#ef4444" rx="2" />
+                                <text x="30" y="12" fontSize="10" fill="#475569">43,801 - 102,800 (High)</text>
+                            </g>
+                            
+                            <g transform="translate(10, 60)">
+                                <rect width="20" height="15" fill="#f97316" rx="2" />
+                                <text x="30" y="12" fontSize="10" fill="#475569">26,201 - 43,800</text>
+                            </g>
+                            
+                            <g transform="translate(10, 80)">
+                                <rect width="20" height="15" fill="#86efac" rx="2" />
+                                <text x="30" y="12" fontSize="10" fill="#475569">13,301 - 26,200</text>
+                            </g>
+
+                            <g transform="translate(10, 100)">
+                                <rect width="20" height="15" fill="#15803d" rx="2" />
+                                <text x="30" y="12" fontSize="10" fill="#475569">400 - 6,200 (Low)</text>
+                            </g>
+                        </g>
+                    </svg>
+
+                    {/* Tooltips */}
+                    {hovered === 'usa' && (
+                        <div className="absolute top-1/4 left-1/4 bg-white p-3 rounded-lg shadow-xl border-l-4 border-red-500 z-10 animate-fade-in pointer-events-none">
+                            <h3 className="font-bold text-red-600 flex items-center gap-2">
+                                🇺🇸 USA (MEDC)
+                            </h3>
+                            <p className="text-sm font-semibold">GNI: High Income</p>
+                            <p className="text-xs text-gray-500">More Economically Developed</p>
+                        </div>
+                    )}
+                    {hovered === 'bolivia' && (
+                        <div className="absolute top-1/2 left-10 bg-white p-3 rounded-lg shadow-xl border-l-4 border-green-700 z-10 animate-fade-in pointer-events-none">
+                            <h3 className="font-bold text-green-700 flex items-center gap-2">
+                                🇧🇴 Bolivia (LEDC)
+                            </h3>
+                            <p className="text-sm font-semibold">GNI: Low Income</p>
+                            <p className="text-xs text-gray-500">Less Economically Developed</p>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const EmploymentGraph = () => {
+            const [year, setYear] = useState(null);
+            
+            const data = [
+                { year: 1930, pri: 42, sec: 18, ter: 40 },
+                { year: 1940, pri: 38, sec: 25, ter: 37 },
+                { year: 1950, pri: 30, sec: 30, ter: 40 },
+                { year: 1960, pri: 20, sec: 35, ter: 45 },
+                { year: 1970, pri: 15, sec: 38, ter: 47 },
+                { year: 1980, pri: 5,  sec: 25, ter: 70 },
+                { year: 1990, pri: 4,  sec: 25, ter: 71 },
+                { year: 2000, pri: 4,  sec: 18, ter: 78 },
+                { year: 2010, pri: 4,  sec: 15, ter: 81 },
+            ];
+
+            const width = 600;
+            const height = 300;
+            const padding = 40;
+            const contentW = width - padding * 2;
+            const contentH = height - padding * 2;
+
+            const getX = (yr) => padding + ((yr - 1930) / (2010 - 1930)) * contentW;
+            const getY = (val) => height - padding - (val / 100) * contentH;
+            const makePath = (key) => data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${getX(d.year)} ${getY(d[key])}`).join(' ');
+
+            return (
+                <div className="relative w-full overflow-x-auto bg-white rounded-xl shadow p-4 border border-gray-200 mb-4">
+                     <div className="absolute top-2 right-2 bg-gray-100 p-1 px-2 rounded text-xs text-gray-600 font-bold">
+                        Fig. 2: Employment
+                    </div>
+                    <h4 className="text-center font-bold text-gray-700 mb-2 text-sm">Changes in Employment Structure (1930 - 2010)</h4>
+                    <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="min-w-[500px]">
+                        {[0, 20, 40, 60, 80, 100].map(val => (
+                            <g key={val}>
+                                <line x1={padding} y1={getY(val)} x2={width - padding} y2={getY(val)} stroke="#eee" />
+                                <text x={padding - 10} y={getY(val) + 4} textAnchor="end" fontSize="10" fill="#888">{val}%</text>
+                            </g>
+                        ))}
+                        {data.map(d => (
+                            <text key={d.year} x={getX(d.year)} y={height - 10} textAnchor="middle" fontSize="10" fill="#666">{d.year}</text>
+                        ))}
+                        <path d={makePath('pri')} fill="none" stroke="#0ea5e9" strokeWidth="3" />
+                        <path d={makePath('sec')} fill="none" stroke="#16a34a" strokeWidth="3" />
+                        <path d={makePath('ter')} fill="none" stroke="#dc2626" strokeWidth="3" />
+                        {data.map((d) => (
+                            <g key={d.year} onMouseEnter={() => setYear(d)} onMouseLeave={() => setYear(null)}>
+                                <circle cx={getX(d.year)} cy={getY(d.pri)} r="6" fill="#0ea5e9" className="opacity-0 hover:opacity-100" />
+                                <circle cx={getX(d.year)} cy={getY(d.sec)} r="6" fill="#16a34a" className="opacity-0 hover:opacity-100" />
+                                <circle cx={getX(d.year)} cy={getY(d.ter)} r="6" fill="#dc2626" className="opacity-0 hover:opacity-100" />
+                                <rect x={getX(d.year) - 10} y={padding} width="20" height={contentH} fill="transparent" className="cursor-crosshair" />
+                            </g>
+                        ))}
+                    </svg>
+                    <div className="flex justify-center gap-4 mt-2 text-sm">
+                        <div className="flex items-center"><div className="w-3 h-3 bg-sky-500 mr-1 rounded-full"></div> Primary</div>
+                        <div className="flex items-center"><div className="w-3 h-3 bg-green-600 mr-1 rounded-full"></div> Secondary</div>
+                        <div className="flex items-center"><div className="w-3 h-3 bg-red-600 mr-1 rounded-full"></div> Tertiary</div>
+                    </div>
+                    {year && (
+                        <div className="absolute top-8 right-8 bg-white/95 p-2 rounded shadow border text-xs z-10">
+                            <div className="font-bold">{year.year}</div>
+                            <div className="text-red-600">Ter: {year.ter}%</div>
+                            <div className="text-green-600">Sec: {year.sec}%</div>
+                            <div className="text-sky-600">Pri: {year.pri}%</div>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        const MatchingGame = () => {
+            const initialItems = [
+                { id: 't1', text: 'Agriculture', type: 'primary' },
+                { id: 't2', text: 'Social Services', type: 'tertiary' },
+                { id: 't3', text: 'Manufacturing', type: 'secondary' },
+                { id: 't4', text: 'Gas, Electricity, Water', type: 'secondary' },
+                { id: 't5', text: 'Finance', type: 'tertiary' },
+            ];
+            const [items, setItems] = useState(initialItems);
+            const [matches, setMatches] = useState({});
+            const [message, setMessage] = useState('');
+            const bins = ['primary', 'secondary', 'tertiary']; 
+
+            const handleDrop = (e, bin) => {
+                e.preventDefault();
+                const itemId = e.dataTransfer.getData("text");
+                const item = initialItems.find(i => i.id === itemId);
+                if (item) {
+                    let isCorrect = (bin === item.type);
+                    if(isCorrect) {
+                        setMatches(prev => ({...prev, [itemId]: bin}));
+                        setItems(prev => prev.filter(i => i.id !== itemId));
+                        setMessage('Correct Match!');
+                        setTimeout(() => setMessage(''), 1000);
+                    } else {
+                        setMessage('Try again!');
+                        setTimeout(() => setMessage(''), 1000);
+                    }
+                }
+            };
+            
+            const reset = () => { setItems(initialItems); setMatches({}); setMessage(''); }
+
+            return (
+                <div className="bg-white p-6 rounded-xl shadow-lg border border-purple-100">
+                    <div className="flex justify-between items-center mb-4">
+                         <h3 className="font-bold text-lg text-purple-800">Review Activity</h3>
+                         <button onClick={reset} className="text-xs bg-gray-200 px-2 py-1 rounded hover:bg-gray-300">Reset</button>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-4">Drag the employment examples to the correct sector box.</p>
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                        {bins.map(bin => (
+                            <div key={bin} onDragOver={(e) => e.preventDefault()} onDrop={(e) => handleDrop(e, bin)}
+                                className="h-24 bg-purple-50 border-2 border-dashed border-purple-300 rounded-lg flex flex-col items-center justify-center">
+                                <span className="font-bold uppercase text-purple-400 text-xs mb-1">{bin}</span>
+                                <div className="flex flex-wrap justify-center gap-1 p-1 w-full">
+                                    {Object.entries(matches).filter(([id, b]) => b === bin).map(([id, b]) => {
+                                        const item = initialItems.find(i => i.id === id);
+                                        return <span key={id} className="text-[10px] bg-purple-600 text-white px-1 py-0.5 rounded shadow-sm">{item.text}</span>
+                                    })}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex gap-2 flex-wrap min-h-[40px] p-2 bg-gray-50 rounded border justify-center">
+                        {items.map(item => (
+                            <div key={item.id} draggable onDragStart={(e) => e.dataTransfer.setData("text", item.id)}
+                                className="cursor-grab active:cursor-grabbing bg-white border border-gray-300 px-3 py-1 rounded shadow-sm hover:shadow-md text-sm">
+                                {item.text}
+                            </div>
+                        ))}
+                        {items.length === 0 && <span className="text-green-600 font-bold text-sm">All matched!</span>}
+                    </div>
+                    {message && <div className="text-center mt-2 font-bold text-orange-500 text-sm">{message}</div>}
+                </div>
+            );
+        };
+
+        const QuestionCard = ({ question, isOpen, onToggle }) => {
+            return (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 overflow-hidden fade-in">
+                    <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
+                        <h3 className="font-semibold text-gray-800 text-lg">{question.title} <span className="text-gray-500 text-sm ml-2">[{question.marks} marks]</span></h3>
+                    </div>
+                    <div className="p-4">
+                        {question.type === 'game' ? (
+                            <MatchingGame />
+                        ) : (
+                            <React.Fragment>
+                                {question.type === 'inputs' ? (
+                                    <div className="grid grid-cols-1 gap-2 mb-4">
+                                        <input className="w-full p-2 border rounded" placeholder="Indicator 1 + Explanation" />
+                                        <input className="w-full p-2 border rounded" placeholder="Indicator 2 + Explanation" />
+                                    </div>
+                                ) : question.type === 'essay' ? (
+                                    <React.Fragment>
+                                        <input className="w-full p-2 border rounded mb-2 font-bold" placeholder="Name of TNC and Area (e.g., Nike in Vietnam)" />
+                                        <textarea className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400 outline-none" rows={question.rows || 3} placeholder={question.placeholder}></textarea>
+                                    </React.Fragment>
+                                ) : (
+                                    <textarea className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400 outline-none" rows={question.rows || 3} placeholder={question.placeholder}></textarea>
+                                )}
+                                
+                                <div className="mt-4">
+                                    <button onClick={onToggle}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded text-sm font-medium transition-colors ${isOpen ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                                        {isOpen ? 'Hide Model Answer' : 'Show Model Answer'}
+                                    </button>
+                                    
+                                    {isOpen && (
+                                        <div className="mt-4 grid grid-cols-1 gap-4 animate-fade-in">
+                                            {/* WRITING TIP SECTION */}
+                                            {question.writingTip && (
+                                                <div className="p-4 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-sm">
+                                                    <div className="flex items-center gap-2 mb-2 font-bold text-amber-700">
+                                                        <Lightbulb size={18} /> 💡 Exam Tip: How to Answer
+                                                    </div>
+                                                    <p>{question.writingTip}</p>
+                                                </div>
+                                            )}
+
+                                            {/* MODEL ANSWER SECTION */}
+                                            <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-100 text-indigo-900 text-sm">
+                                                <div className="flex items-center gap-2 mb-2 font-bold text-indigo-800">
+                                                    <CheckSquare size={18} /> ✅ Model Answer
+                                                </div>
+                                                {question.modelAnswer}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </React.Fragment>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // --- Main App ---
+
+        const App = () => {
+            const [viewMode, setViewMode] = useState('list'); // 'list' or 'quiz'
+            const [openQ, setOpenQ] = useState(null); // For List Mode
+            
+            // Quiz State
+            const [quizQuestions, setQuizQuestions] = useState([]);
+            const [currentQIndex, setCurrentQIndex] = useState(0);
+            const [showAnswerQuiz, setShowAnswerQuiz] = useState(false);
+
+            const toggleQ = (id) => setOpenQ(openQ === id ? null : id);
+
+            const startQuiz = () => {
+                // Fisher-Yates Shuffle
+                const shuffled = [...QUESTION_DATA];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                setQuizQuestions(shuffled);
+                setCurrentQIndex(0);
+                setShowAnswerQuiz(false);
+                setViewMode('quiz');
+            };
+
+            const nextQuestion = () => {
+                if (currentQIndex < quizQuestions.length - 1) {
+                    setCurrentQIndex(prev => prev + 1);
+                    setShowAnswerQuiz(false);
+                } else {
+                    // Finished
+                    alert("Quiz Completed! Returning to menu.");
+                    setViewMode('list');
+                }
+            };
+
+            const renderContext = (contextType) => {
+                if (contextType === 'map') return <AmericasMap />;
+                if (contextType === 'graph') return <EmploymentGraph />;
+                return null;
+            };
+
+            return (
+                <div className="min-h-screen pb-12 bg-slate-50">
+                    {/* Header */}
+                    <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 shadow-lg sticky top-0 z-50">
+                        <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div>
+                                <h1 className="text-2xl font-bold">IGCSE Geography Reviewer</h1>
+                                <p className="text-blue-200 text-sm">Midterm Exam Prep | Grade 10</p>
+                            </div>
+                            
+                            <div className="flex gap-2 bg-white/10 p-1 rounded-lg">
+                                <button 
+                                    onClick={() => setViewMode('list')}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded transition-all ${viewMode === 'list' ? 'bg-white text-blue-900 shadow font-bold' : 'text-white hover:bg-white/20'}`}
+                                >
+                                    <BookOpen size={18} /> Full Review
+                                </button>
+                                <button 
+                                    onClick={startQuiz}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded transition-all ${viewMode === 'quiz' ? 'bg-white text-blue-900 shadow font-bold' : 'text-white hover:bg-white/20'}`}
+                                >
+                                    <Shuffle size={18} /> Scrambled Quiz
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="max-w-4xl mx-auto p-4 space-y-8 mt-4">
+                        
+                        {/* LIST MODE (Original) */}
+                        {viewMode === 'list' && (
+                            <div className="animate-fade-in space-y-8">
+                                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded text-yellow-800 text-sm">
+                                    <strong>Tip:</strong> Use "Full Review" to study systematically. Use "Scrambled Quiz" to test yourself without memorizing the order!
+                                </div>
+
+                                {/* Iterate sections strictly for List View */}
+                                <section>
+                                    <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                                        <span className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">A</span>
+                                        <h2 className="text-xl font-bold text-gray-800">Development Indicators</h2>
+                                    </div>
+                                    <AmericasMap />
+                                    {QUESTION_DATA.filter(q => q.section === 'A').map(q => (
+                                        <QuestionCard key={q.id} question={q} isOpen={openQ === q.id} onToggle={() => toggleQ(q.id)} />
+                                    ))}
+                                </section>
+
+                                <section>
+                                    <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                                        <span className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">B</span>
+                                        <h2 className="text-xl font-bold text-gray-800">Employment Structure</h2>
+                                    </div>
+                                    <EmploymentGraph />
+                                    {QUESTION_DATA.filter(q => q.section === 'B').map(q => (
+                                        <QuestionCard key={q.id} question={q} isOpen={openQ === q.id} onToggle={() => toggleQ(q.id)} />
+                                    ))}
+                                </section>
+
+                                <section>
+                                    <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                                        <span className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">C</span>
+                                        <h2 className="text-xl font-bold text-gray-800">Transnational Corporations</h2>
+                                    </div>
+                                    {QUESTION_DATA.filter(q => q.section === 'C').map(q => (
+                                        <QuestionCard key={q.id} question={q} isOpen={openQ === q.id} onToggle={() => toggleQ(q.id)} />
+                                    ))}
+                                </section>
+
+                                <section>
+                                    <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                                        <span className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">D</span>
+                                        <h2 className="text-xl font-bold text-gray-800">Activity</h2>
+                                    </div>
+                                    {QUESTION_DATA.filter(q => q.section === 'D').map(q => (
+                                        <QuestionCard key={q.id} question={q} isOpen={openQ === q.id} onToggle={() => toggleQ(q.id)} />
+                                    ))}
+                                </section>
+                            </div>
+                        )}
+
+                        {/* QUIZ MODE (Randomized) */}
+                        {viewMode === 'quiz' && quizQuestions.length > 0 && (
+                            <div className="animate-fade-in max-w-2xl mx-auto">
+                                <div className="flex justify-between items-center mb-6">
+                                    <span className="text-gray-500 font-bold">Question {currentQIndex + 1} of {quizQuestions.length}</span>
+                                    <button onClick={startQuiz} className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1 text-sm font-bold">
+                                        <RefreshCw size={14}/> Re-Shuffle
+                                    </button>
+                                </div>
+
+                                {/* Progress Bar */}
+                                <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                                    <div className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style={{ width: `${((currentQIndex + 1) / quizQuestions.length) * 100}%` }}></div>
+                                </div>
+
+                                {/* Context (Map/Graph) - Only shows if needed for CURRENT question */}
+                                <div className="mb-4">
+                                    {renderContext(quizQuestions[currentQIndex].context)}
+                                </div>
+
+                                {/* Question Card */}
+                                <div className="transition-all duration-500">
+                                    <QuestionCard 
+                                        question={quizQuestions[currentQIndex]} 
+                                        isOpen={showAnswerQuiz} 
+                                        onToggle={() => setShowAnswerQuiz(!showAnswerQuiz)} 
+                                    />
+                                </div>
+
+                                {/* Controls */}
+                                <div className="flex justify-end mt-4">
+                                    <button 
+                                        onClick={nextQuestion}
+                                        className="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all flex items-center gap-2"
+                                    >
+                                        {currentQIndex < quizQuestions.length - 1 ? 'Next Question' : 'Finish Quiz'} <CheckCircle size={20}/>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
