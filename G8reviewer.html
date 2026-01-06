@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGCSE Geography: Settlements Reviewer</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --success: #27ae60;
+            --warning: #f1c40f;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: var(--secondary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .question-card {
+            display: none; /* Hidden by default */
+        }
+        .question-card.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .question-type {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            color: white;
+            background-color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .difficulty {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .diff-easy { background-color: #d4edda; color: #155724; }
+        .diff-medium { background-color: #fff3cd; color: #856404; }
+        .diff-hard { background-color: #f8d7da; color: #721c24; }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        /* Input Styles */
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box; 
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        /* MCQ Styles */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option-btn {
+            background: var(--light);
+            border: 2px solid #ddd;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            position: relative;
+        }
+        .option-btn:hover {
+            border-color: var(--secondary);
+            background-color: #e8f4fc;
+        }
+        .option-btn.selected {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        /* Matching Styles */
+        .match-row {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        @media(min-width: 480px) {
+            .match-row {
+                flex-direction: row;
+                align-items: center;
+                gap: 15px;
+            }
+        }
+        .match-term {
+            flex: 1;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .match-select {
+            flex: 1.5;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: white;
+            font-size: 0.95rem;
+        }
+
+        /* Feedback Section */
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            border-left: 5px solid var(--success);
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            border-left: 5px solid var(--accent);
+            color: #721c24;
+        }
+        .feedback.review {
+            background-color: #fff3cd;
+            border-left: 5px solid var(--warning);
+            color: #856404;
+        }
+        
+        .model-header {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            display: block;
+            opacity: 0.8;
+        }
+
+        /* Buttons */
+        .btn-container {
+            margin-top: 20px;
+        }
+        .btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .btn-next {
+            background-color: var(--primary);
+            display: none;
+        }
+        .btn-next:hover {
+            background-color: #1a252f;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* End Screen */
+        .end-screen {
+            text-align: center;
+            display: none;
+            padding: 20px;
+        }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.4);
+        }
+        .score-message {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Geography Reviewer</h1>
+    <div class="subtitle">Settlements, Services & Urban Case Studies</div>
+    
+    <div id="quiz-area">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <div id="question-container">
+            <!-- Questions will be injected here by JS -->
+        </div>
+
+        <div id="feedback-container" class="feedback"></div>
+        
+        <div class="btn-container">
+            <button id="submit-btn" class="btn" onclick="submitAnswer()">Submit Answer</button>
+            <button id="next-btn" class="btn btn-next" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+    <div id="end-screen" class="end-screen">
+        <div class="score-circle" id="final-score">0/0</div>
+        <h2>Review Complete!</h2>
+        <p class="score-message" id="score-message">Well done!</p>
+        <button class="btn" onclick="location.reload()">Restart Reviewer</button>
+    </div>
+</div>
+
+<script>
+    // --- DATA SOURCE (Based on user images) ---
+    const questions = [
+        // --- EASY QUESTIONS ---
+        {
+            id: 1,
+            type: 'mcq',
+            category: 'Settlement Patterns',
+            difficulty: 'easy',
+            text: 'According to the Settlement Patterns section, what is a "Nucleated" settlement?',
+            options: [
+                'Buildings are arranged in a line along a road or river.',
+                'Buildings are clustered around a central point like a crossroads.',
+                'Buildings are scattered randomly across the countryside.',
+                'A temporary settlement that moves every season.'
+            ],
+            correct: 1,
+            explanation: 'Nucleated settlements form a cluster of buildings around a central point (like a bridge or crossroads), often in lowland areas with fertile land.'
+        },
+        {
+            id: 2,
+            type: 'mcq',
+            category: 'Functions',
+            difficulty: 'easy',
+            text: 'What is a "Market Town"?',
+            options: [
+                'A town where people primarily work in factories.',
+                'A town located on the coast for tourists.',
+                'A town where goods produced in the surrounding area are bought and sold.',
+                'A town built specifically for mining operations.'
+            ],
+            correct: 2,
+            explanation: 'Market towns exist primarily for the buying and selling of goods produced in the surrounding rural areas.'
+        },
+        {
+            id: 3,
+            type: 'mcq',
+            category: 'Hierarchy',
+            difficulty: 'easy',
+            text: 'In the settlement hierarchy, which type of settlement has the largest population but the fewest number of occurrences?',
+            options: [
+                'Hamlet',
+                'Village',
+                'Large Town',
+                'Capital City'
+            ],
+            correct: 3,
+            explanation: 'The Capital City is at the top of the hierarchy triangle. It has the largest population, largest sphere of influence, but there are very few of them (usually one).'
+        },
+        {
+            id: 4,
+            type: 'mcq',
+            category: 'Site Factors',
+            difficulty: 'easy',
+            text: 'Which physical factor is described as a "Wet Point" site?',
+            options: [
+                'Building on high ground to avoid floods.',
+                'Building near a river or spring for water supply.',
+                'Building on south-facing slopes for warmth.',
+                'Building near a forest for fuel.'
+            ],
+            correct: 1,
+            explanation: 'A "Wet Point" site is chosen specifically because it has a good water supply, which is essential for survival.'
+        },
+        {
+            id: 5,
+            type: 'mcq',
+            category: 'Case Study: Sardinia',
+            difficulty: 'easy',
+            text: 'What was the original function of the town of Carbonia in Sardinia?',
+            options: [
+                'A luxury tourist resort.',
+                'A housing town for coal mine workers.',
+                'A major international airport hub.',
+                'A fishing village.'
+            ],
+            correct: 1,
+            explanation: 'Carbonia was built to house the workforce for nearby coal mines. "Carbone" means coal in Italian.'
+        },
+
+        // --- MEDIUM QUESTIONS ---
+        {
+            id: 6,
+            type: 'input',
+            category: 'Definitions',
+            difficulty: 'medium',
+            text: 'What term is used to describe the minimum number of people needed to support a service or shop?',
+            correct: ['threshold', 'threshold population'],
+            explanation: 'The <strong>Threshold Population</strong> is the minimum number of customers required to make a service profitable.'
+        },
+        {
+            id: 7,
+            type: 'input',
+            category: 'Settlement Patterns',
+            difficulty: 'medium',
+            text: 'What settlement pattern is described as "long and thin," often following a road, river, or valley floor?',
+            correct: ['linear', 'linear settlement'],
+            explanation: 'A <strong>Linear</strong> settlement pattern develops along a line of communication (road/river) or constrained by physical geography (steep valley sides).'
+        },
+        {
+            id: 8,
+            type: 'matching',
+            category: 'Hierarchy',
+            difficulty: 'medium',
+            text: 'Match the service to its order level (Low vs High Order):',
+            pairs: [
+                { term: 'General Store selling milk', match: 'Low Order' },
+                { term: 'Brain Surgery Hospital', match: 'High Order' },
+                { term: 'Primary School', match: 'Low Order' },
+                { term: 'University', match: 'High Order' }
+            ],
+            options: ['Low Order', 'High Order'],
+            explanation: 'Low order goods are bought frequently and are cheap (convenience). High order services are specialized, expensive, and used infrequently.'
+        },
+        {
+            id: 9,
+            type: 'mcq',
+            category: 'Case Study: Accra',
+            difficulty: 'medium',
+            text: 'Accra developed from three separate settlements (James Town, Ussher Town, Christiansborg). What was the original function of these settlements?',
+            options: [
+                'Industrial manufacturing hubs.',
+                'Fishing villages around 17th-century forts.',
+                'Inland farming communities.',
+                'Mining outposts.'
+            ],
+            correct: 1,
+            explanation: 'They began as fishing villages clustered around 17th-century forts built by European traders.'
+        },
+        {
+            id: 10,
+            type: 'input',
+            category: 'Case Study: Rural',
+            difficulty: 'medium',
+            text: 'In the Ethiopia case study (Korodegaga), what specific crop is mentioned as an important grain grown only in Ethiopia?',
+            correct: ['tef', 'teff'],
+            explanation: '<strong>Tef (or Teff)</strong> is the specific grain mentioned in the text as a key crop for this region.'
+        },
+        {
+            id: 11,
+            type: 'matching',
+            category: 'Functions',
+            difficulty: 'medium',
+            text: 'Match the town type to its description:',
+            pairs: [
+                { term: 'Port', match: 'Located on estuaries/bays for import/export.' },
+                { term: 'Industrial Town', match: 'Workers process raw materials in factories.' },
+                { term: 'Tourist Resort', match: 'Located on coasts, focuses on leisure.' },
+                { term: 'Residential Town', match: 'Commuter town where people live but work elsewhere.' }
+            ],
+            options: [
+                'Located on estuaries/bays for import/export.', 
+                'Workers process raw materials in factories.',
+                'Located on coasts, focuses on leisure.',
+                'Commuter town where people live but work elsewhere.'
+            ],
+            explanation: 'Ports need water access; Industrial towns need power/materials; Resorts need scenery; Residential towns need transport links to cities.'
+        },
+
+        // --- HARD / EXAM STYLE QUESTIONS ---
+        {
+            id: 12,
+            type: 'essay',
+            category: 'Analysis',
+            difficulty: 'hard',
+            text: 'Explain why "High Order" services (like the National Stadium in Warsaw) are located in large cities rather than villages. (IGCSE Style)',
+            explanation: '<span class="model-header">Model Answer Points:</span><br>1. <strong>Threshold Population:</strong> High order services are expensive to build and operate. They require a very large population to provide enough customers to make a profit.<br>2. <strong>Sphere of Influence:</strong> They have a large sphere of influence; people are willing to travel long distances (high range) for these unique services.<br>3. <strong>Accessibility:</strong> Large cities act as nodal points with airports and train stations, making the service accessible to the whole country.'
+        },
+        {
+            id: 13,
+            type: 'essay',
+            category: 'Site Factors',
+            difficulty: 'hard',
+            text: 'Suggest reasons why the site of a settlement might change from being an advantage in the past to a disadvantage today.',
+            explanation: '<span class="model-header">Model Answer Points:</span><br>1. <strong>Defense:</strong> Hilltop sites were good for defense in the past, but today they are difficult to build on, hard to access by road, and exposed to wind.<br>2. <strong>Water:</strong> Being right next to a river was crucial for water supply, but now creates a flood risk which causes insurance issues.<br>3. <strong>Space:</strong> Sites chosen for protection often have limited space for modern expansion (e.g., inside a river meander).'
+        },
+        {
+            id: 14,
+            type: 'essay',
+            category: 'Case Study: Olbia',
+            difficulty: 'hard',
+            text: 'Explain how the function of Olbia (Sardinia) has influenced its growth.',
+            explanation: '<span class="model-header">Model Answer Points:</span><br>1. <strong>Transport Function:</strong> Its function as a port and airport city makes it the main entry point ("gateway") for tourists visiting the Costa Smeralda.<br>2. <strong>Economic Growth:</strong> This connectivity attracts businesses and hotels, creating jobs and increasing the population.<br>3. <strong>Hinterland:</strong> It serves as a service center for the surrounding region via the expressway to Nuoro.'
+        },
+        {
+            id: 15,
+            type: 'input',
+            category: 'Terminology',
+            difficulty: 'hard',
+            text: 'What is the term for the maximum distance a person is willing to travel to buy a good or service?',
+            correct: ['range'],
+            explanation: '<strong>Range</strong> is the maximum distance a consumer is willing to travel. It is short for low-order goods (milk) and long for high-order goods (furniture/specialized medical care).'
+        },
+        {
+            id: 16,
+            type: 'essay',
+            category: 'Synthesis',
+            difficulty: 'hard',
+            text: 'Describe the relationship between settlement size, number of services, and distance between settlements.',
+            explanation: '<span class="model-header">Model Answer Points:</span><br>1. <strong>Size vs Services:</strong> Positive correlation. As settlement size increases, the number and variety of services increase.<br>2. <strong>Size vs Frequency:</strong> Negative correlation. There are many small settlements (villages) but very few large ones (cities).<br>3. <strong>Spacing:</strong> Large settlements are spaced far apart because they have large competing spheres of influence. Small settlements are found closer together.'
+        },
+        {
+            id: 17,
+            type: 'essay',
+            category: 'Settlement Patterns',
+            difficulty: 'hard',
+            text: 'Explain why Dispersed settlement patterns are commonly found in upland areas.',
+            explanation: '<span class="model-header">Model Answer Points:</span><br>1. <strong>Terrain:</strong> The land is often steep and rugged, making it physically difficult to build many houses together in a cluster.<br>2. <strong>Agriculture type:</strong> Upland areas are used for pastoral farming (sheep/grazing). Farmers need large areas of land per farm, so farmhouses are spread out.<br>3. <strong>Resources:</strong> Poor soil and lack of concentrated water sources limit the ability of the land to support a dense population.'
+        },
+        {
+            id: 18,
+            type: 'matching',
+            category: 'Identification',
+            difficulty: 'hard',
+            text: 'Match the Case Study city to its country:',
+            pairs: [
+                { term: 'Warsaw', match: 'Poland' },
+                { term: 'Accra', match: 'Ghana' },
+                { term: 'Carbonia', match: 'Italy (Sardinia)' },
+                { term: 'Korodegaga', match: 'Ethiopia' }
+            ],
+            options: ['Poland', 'Ghana', 'Italy (Sardinia)', 'Ethiopia'],
+            explanation: 'Warsaw (Poland), Accra (Ghana), Carbonia (Italy/Sardinia), Korodegaga (Ethiopia).'
+        },
+        {
+            id: 19,
+            type: 'mcq',
+            category: 'Urbanization',
+            difficulty: 'hard',
+            text: 'Which problem is most associated with the rapid growth of cities like Accra?',
+            options: [
+                'Lack of cultural activities.',
+                'Development of squatter settlements due to housing shortage.',
+                'Too many empty houses.',
+                'Decrease in traffic congestion.'
+            ],
+            correct: 1,
+            explanation: 'Rapid urbanization in developing cities often leads to housing shortages, resulting in the growth of informal squatter settlements with poor sanitation.'
+        },
+        {
+            id: 20,
+            type: 'essay',
+            category: 'Map Skills',
+            difficulty: 'hard',
+            text: 'If a settlement is located at a "Dry Point," describe its likely physical location.',
+            explanation: '<span class="model-header">Model Answer Points:</span><br>A dry point settlement is located on <strong>slightly higher ground</strong> (like a small hill or terrace) within a low-lying, wet, or marshy area. This location is chosen to keep buildings and people safe from flooding while still being close to the fertile wet lands for farming.'
+        }
+    ];
+
+    // --- GAME LOGIC ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let shuffledQuestions = [];
+
+    // Fisher-Yates Shuffle
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function initQuiz() {
+        // Logic to ensure first question is EASY
+        const easyQuestions = questions.filter(q => q.difficulty === 'easy');
+        const otherQuestions = questions.filter(q => q.difficulty !== 'easy');
+        
+        let firstQuestion;
+        let remainingQuestions;
+
+        if (easyQuestions.length > 0) {
+            // Pick one random easy question
+            const firstIdx = Math.floor(Math.random() * easyQuestions.length);
+            firstQuestion = easyQuestions[firstIdx];
+            
+            // Remove it from the easy list so we can shuffle the rest
+            easyQuestions.splice(firstIdx, 1);
+            
+            // Combine remaining easy questions with others and shuffle them
+            const othersShuffled = shuffleArray([...easyQuestions, ...otherQuestions]);
+            
+            // Construct final array: Easy Q -> Shuffled Rest
+            shuffledQuestions = [firstQuestion, ...othersShuffled];
+        } else {
+            // Fallback if no easy questions exist
+            shuffledQuestions = shuffleArray([...questions]);
+        }
+
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById('end-screen').style.display = 'none';
+        document.getElementById('quiz-area').style.display = 'block';
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const container = document.getElementById('question-container');
+        const q = shuffledQuestions[currentQuestionIndex];
+        
+        // Update Progress
+        const progress = ((currentQuestionIndex) / questions.length) * 100;
+        document.getElementById('progress').style.width = `${progress}%`;
+        
+        // Reset UI State
+        document.getElementById('feedback-container').style.display = 'none';
+        document.getElementById('submit-btn').style.display = 'block';
+        document.getElementById('submit-btn').disabled = false;
+        document.getElementById('next-btn').style.display = 'none';
+
+        // Build Difficulty Badge Class
+        const diffClass = `diff-${q.difficulty}`;
+
+        let html = `
+            <div class="question-card active">
+                <div class="question-meta">
+                    <span class="question-type">${q.type}</span>
+                    <span class="difficulty ${diffClass}">${q.difficulty.toUpperCase()}</span>
+                </div>
+                <div class="question-text">${q.text}</div>
+        `;
+
+        // Render Input Areas based on Type
+        if (q.type === 'mcq') {
+            html += `<div class="options-grid">`;
+            q.options.forEach((opt, idx) => {
+                html += `<div class="option-btn" onclick="selectOption(this, ${idx})">${opt}</div>`;
+            });
+            html += `</div>`;
+        } else if (q.type === 'input') {
+            html += `<input type="text" id="user-input" placeholder="Type your answer here..." autocomplete="off">`;
+        } else if (q.type === 'essay') {
+            html += `<textarea id="user-essay" placeholder="Write your explanation here... Try to include 2-3 key points."></textarea>`;
+        } else if (q.type === 'matching') {
+            html += `<div class="matching-area">`;
+            q.pairs.forEach((pair, idx) => {
+                html += `
+                    <div class="match-row">
+                        <div class="match-term">${pair.term}</div>
+                        <select class="match-select" id="match-${idx}">
+                            <option value="">Select Definition...</option>
+                            ${q.options.map((opt) => `<option value="${opt}">${opt}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        }
+
+        html += `</div>`;
+        container.innerHTML = html;
+    }
+
+    let selectedOptionIndex = null;
+
+    function selectOption(element, index) {
+        // Clear previous selection
+        document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+        // Select new
+        element.classList.add('selected');
+        selectedOptionIndex = index;
+    }
+
+    function submitAnswer() {
+        const q = shuffledQuestions[currentQuestionIndex];
+        const feedbackEl = document.getElementById('feedback-container');
+        let isCorrect = false;
+
+        // Extra feedback content (used for Matching type)
+        let extraFeedback = '';
+
+        // Logic for checking answers
+        if (q.type === 'mcq') {
+            if (selectedOptionIndex === null) {
+                const btn = document.getElementById('submit-btn');
+                btn.innerText = "Please select an option!";
+                setTimeout(() => btn.innerText = "Submit Answer", 1500);
+                return;
+            }
+            if (selectedOptionIndex === q.correct) isCorrect = true;
+        } 
+        else if (q.type === 'input') {
+            const val = document.getElementById('user-input').value.trim().toLowerCase();
+            if (val === '') { 
+                document.getElementById('user-input').focus();
+                return; 
+            }
+            if (q.correct.includes(val)) isCorrect = true;
+        }
+        else if (q.type === 'matching') {
+            let allCorrect = true;
+            
+            // Build the correct answer list for feedback
+            extraFeedback = '<div style="margin-top:15px; background:rgba(255,255,255,0.7); padding:10px; border-radius:5px; border:1px solid #ddd;"><strong>Correct Matches:</strong><ul style="margin:5px 0 0 20px; padding:0;">';
+            
+            q.pairs.forEach((pair, idx) => {
+                const select = document.getElementById(`match-${idx}`);
+                if (select.value !== pair.match) allCorrect = false;
+                extraFeedback += `<li><strong>${pair.term}</strong> &rarr; ${pair.match}</li>`;
+            });
+            extraFeedback += '</ul></div>';
+            
+            isCorrect = allCorrect;
+        }
+        else if (q.type === 'essay') {
+            isCorrect = true; 
+        }
+
+        // Show Feedback
+        feedbackEl.style.display = 'block';
+        
+        if (q.type === 'essay') {
+            feedbackEl.className = 'feedback review';
+            feedbackEl.innerHTML = `${q.explanation}`;
+            score++; 
+        } else if (isCorrect) {
+            feedbackEl.className = 'feedback correct';
+            // Append extra feedback (matching list) if it exists, though usually only needed if wrong, can't hurt to reinforce.
+            feedbackEl.innerHTML = `<strong>Correct!</strong><br>${q.explanation}${extraFeedback}`;
+            score++;
+        } else {
+            feedbackEl.className = 'feedback incorrect';
+            feedbackEl.innerHTML = `<strong>Incorrect.</strong><br>${q.explanation}${extraFeedback}`;
+        }
+
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'block';
+        
+        // Disable inputs
+        if(q.type === 'mcq') {
+            document.querySelectorAll('.option-btn').forEach(btn => btn.style.pointerEvents = 'none');
+        } else if (q.type === 'input') {
+            document.getElementById('user-input').disabled = true;
+        } else if (q.type === 'matching') {
+            document.querySelectorAll('select').forEach(s => s.disabled = true);
+        } else if (q.type === 'essay') {
+            document.getElementById('user-essay').disabled = true;
+        }
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        selectedOptionIndex = null;
+        if (currentQuestionIndex < questions.length) {
+            renderQuestion();
+        } else {
+            showEndScreen();
+        }
+    }
+
+    function showEndScreen() {
+        document.getElementById('quiz-area').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'block';
+        document.getElementById('final-score').innerText = `${score}/${questions.length}`;
+        
+        const percentage = (score / questions.length) * 100;
+        let message = "";
+        if (percentage >= 90) message = "Outstanding! You are exam ready.";
+        else if (percentage >= 70) message = "Great job! Just a few gaps to plug.";
+        else if (percentage >= 50) message = "Good effort. Review the model answers for the harder questions.";
+        else message = "Keep practicing. Focus on the definitions and case studies.";
+        
+        document.getElementById('score-message').innerText = message;
+    }
+
+    // Start
+    initQuiz();
+
+</script>
+
+</body>
+</html>
