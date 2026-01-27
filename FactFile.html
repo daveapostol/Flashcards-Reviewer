@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGCSE Research Guide: Fact File Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .tab-active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .tab-inactive {
+            background-color: white;
+            color: #4b5563;
+            border-color: #e5e7eb;
+        }
+        
+        .tab-inactive:hover {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        .check-box {
+            appearance: none;
+            background-color: #fff;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.15em;
+            height: 1.15em;
+            border: 2px solid currentColor;
+            border-radius: 0.15em;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+        }
+
+        .check-box::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em white;
+            background-color: white;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+
+        .check-box:checked {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+
+        .check-box:checked::before {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center gap-3 w-full">
+                <div class="bg-blue-600 text-white p-2 rounded-lg">
+                    <i class="fas fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900">Research Fact File Builder</h1>
+                    <p class="text-sm text-slate-500">IGCSE / O Level Geography & Global Perspectives</p>
+                </div>
+            </div>
+            <!-- Tabs removed from here -->
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-8 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column: The Guide -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- TOPIC SELECTION TABS (Moved Here) -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-4 items-center justify-between">
+                <div class="flex items-center gap-2 text-slate-700">
+                    <i class="fas fa-list-check text-blue-500"></i>
+                    <span class="font-bold">Choose a Topic to Begin:</span>
+                </div>
+                <div class="flex gap-3 w-full sm:w-auto">
+                    <button onclick="switchTrack('food')" id="btn-food" class="tab-inactive flex-1 sm:flex-none px-4 py-2 rounded-lg font-semibold border transition-all duration-200 flex items-center justify-center gap-2">
+                        <i class="fas fa-wheat-awn"></i> Food Shortages
+                    </button>
+                    <button onclick="switchTrack('tourism')" id="btn-tourism" class="tab-inactive flex-1 sm:flex-none px-4 py-2 rounded-lg font-semibold border transition-all duration-200 flex items-center justify-center gap-2">
+                        <i class="fas fa-plane-departure"></i> Tourism
+                    </button>
+                </div>
+            </div>
+
+            <!-- Guide Container -->
+            <div id="guide-container" class="space-y-6">
+                <!-- Initial State -->
+                <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm text-center py-12 border-dashed border-2">
+                    <div class="inline-block p-4 rounded-full bg-slate-50 text-slate-400 mb-4">
+                        <i class="fas fa-arrow-up text-3xl animate-bounce"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-800 mb-2">Ready to research?</h2>
+                    <p class="text-slate-600 max-w-md mx-auto">Click one of the buttons above (<strong>Food Shortages</strong> or <strong>Tourism</strong>) to load your step-by-step guide.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Teacher's Tips Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+            
+            <!-- Success Criteria Card -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-star text-yellow-500"></i> Top Marks Checklist
+                </h3>
+                <ul class="space-y-3 text-sm text-slate-600">
+                    <li class="flex gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span><strong>Be Specific:</strong> Don't say "people are hungry." Say "In 2022, 15% of the population faced malnutrition."</span>
+                    </li>
+                    <li class="flex gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span><strong>Name Places:</strong> Mention specific regions, cities, or national parks within your chosen country.</span>
+                    </li>
+                    <li class="flex gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span><strong>Evaluation (AO3):</strong> Don't just list facts. Give your opinion. Is the solution working? Is it sustainable?</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Important Definitions -->
+            <div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
+                <h3 class="font-bold text-blue-900 mb-3 text-sm uppercase tracking-wide">Key Vocabulary</h3>
+                <div id="vocab-list" class="space-y-3">
+                    <p class="text-sm text-blue-800">Select a topic above to see key terms here.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto py-6">
+        <div class="max-w-5xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>Research Fact File Tool • Cambridge IGCSE / O Level Support</p>
+        </div>
+    </footer>
+
+    <!-- Templates -->
+    <script>
+        const contentContainer = document.getElementById('guide-container');
+        const vocabContainer = document.getElementById('vocab-list');
+        const btnFood = document.getElementById('btn-food');
+        const btnTourism = document.getElementById('btn-tourism');
+
+        const foodContent = `
+            <!-- Introduction Section -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 bg-orange-100 text-orange-600 rounded-lg"><i class="fas fa-globe-africa"></i></div>
+                    <h2 class="text-xl font-bold">1. Country Profile (The Context)</h2>
+                </div>
+                <p class="text-sm text-slate-500 mb-4">Start your Fact File by setting the scene.</p>
+                <div class="space-y-3">
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Country Name:</strong> Which country are you studying? (e.g., South Sudan, Yemen)</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Climate Data:</strong> Is it arid (dry), tropical, or temperate? Mention average rainfall if relevant.</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Key Stat:</strong> Find the GNI per capita or the Population size.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Causes Section -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 bg-red-100 text-red-600 rounded-lg"><i class="fas fa-magnifying-glass-chart"></i></div>
+                    <h2 class="text-xl font-bold">2. The Causes (The 'Why')</h2>
+                </div>
+                
+                <!-- Diagram for Food Causes -->
+                <div class="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3 text-center">Causes of Food Shortage</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white p-3 rounded shadow-sm border-l-4 border-blue-400">
+                            <h5 class="font-bold text-blue-900 text-sm">Physical Factors</h5>
+                            <ul class="text-xs text-slate-600 mt-1 list-disc list-inside">
+                                <li>Drought / Floods</li>
+                                <li>Soil Erosion</li>
+                                <li>Pests (Locusts)</li>
+                                <li>Climate Change</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-3 rounded shadow-sm border-l-4 border-orange-400">
+                            <h5 class="font-bold text-orange-900 text-sm">Human Factors</h5>
+                            <ul class="text-xs text-slate-600 mt-1 list-disc list-inside">
+                                <li>War / Conflict</li>
+                                <li>Poor Infrastructure</li>
+                                <li>Debt / Poverty</li>
+                                <li>Focus on Cash Crops</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <p class="text-sm font-semibold text-slate-700">Research Questions to Answer:</p>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Physical:</strong> How has nature made farming difficult in this country?</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Human:</strong> How have politics, war, or economics made the situation worse?</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Primary Cause:</strong> Which factor is the MAIN cause? (e.g., "While drought started it, the war prevented aid from arriving.")</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Impacts Section -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 bg-purple-100 text-purple-600 rounded-lg"><i class="fas fa-people-arrows"></i></div>
+                    <h2 class="text-xl font-bold">3. The Impacts (So What?)</h2>
+                </div>
+                <div class="space-y-3">
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Social:</strong> Look for data on malnutrition, starvation deaths, or disease outbreaks.</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Migration:</strong> Are people leaving their homes? (Look for terms like 'Internally Displaced People' or 'Refugees').</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Economic:</strong> Is the country spending all its money importing food? Has the price of food skyrocketed?</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Management Section -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-green-500">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 bg-green-100 text-green-600 rounded-lg"><i class="fas fa-seedling"></i></div>
+                    <h2 class="text-xl font-bold">4. Management & Evaluation</h2>
+                </div>
+                <p class="text-sm text-slate-500 mb-4">This is the most important section for high marks.</p>
+                <div class="space-y-3">
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Describe Solutions:</strong> What is being done? (e.g., UN Food Aid, Drought-resistant seeds, New irrigation dams).</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-lg hover:bg-green-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1 text-green-600">
+                        <span class="text-sm text-green-800"><strong>Evaluate (Your Verdict):</strong> Is the solution sustainable? Is it a short-term 'band-aid' (like food aid) or a long-term fix (like better farming tech)?</span>
+                    </label>
+                </div>
+            </div>
+        `;
+
+        const tourismContent = `
+            <!-- Introduction Section -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 bg-sky-100 text-sky-600 rounded-lg"><i class="fas fa-map-marked-alt"></i></div>
+                    <h2 class="text-xl font-bold">1. Country Profile (The Context)</h2>
+                </div>
+                <div class="space-y-3">
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Country Name:</strong> Which country are you studying? (e.g., Jamaica, Thailand, Iceland)</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Importance:</strong> Find a statistic on how much Tourism contributes to their GDP (%).</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Scale:</strong> How many visitors come per year?</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Attractions Section -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 bg-yellow-100 text-yellow-600 rounded-lg"><i class="fas fa-camera"></i></div>
+                    <h2 class="text-xl font-bold">2. The Attractions (Why do they come?)</h2>
+                </div>
+                <div class="space-y-3">
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Physical Attractions:</strong> Climate, Beaches, Mountains, Wildlife. Be specific (e.g., "The Blue Lagoon").</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Human Attractions:</strong> Culture, Food, History, Museums, Theme Parks.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Butler Model Section -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 bg-indigo-100 text-indigo-600 rounded-lg"><i class="fas fa-chart-line"></i></div>
+                    <h2 class="text-xl font-bold">3. Growth & The Butler Model</h2>
+                </div>
+                
+                <!-- SVG Diagram for Butler Model -->
+                <div class="mb-6 bg-slate-50 p-6 rounded-lg border border-slate-200 flex flex-col items-center">
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Butler's Product Life Cycle</h4>
+                    <svg viewBox="0 0 400 200" class="w-full max-w-md h-auto border-b border-l border-slate-400">
+                        <!-- Curve -->
+                        <path d="M 10 190 Q 50 180, 100 150 T 200 80 T 300 50 L 350 60" fill="none" stroke="#4f46e5" stroke-width="3" />
+                        <!-- Labels -->
+                        <text x="20" y="180" font-size="10" fill="#64748b">Exploration</text>
+                        <text x="120" y="120" font-size="10" fill="#64748b">Development</text>
+                        <text x="220" y="50" font-size="10" fill="#64748b">Stagnation</text>
+                        <text x="350" y="80" font-size="10" fill="#ef4444">Decline</text>
+                        <text x="350" y="30" font-size="10" fill="#22c55e">Rejuvenation</text>
+                        <!-- Dashed lines for outcome -->
+                        <path d="M 300 50 L 350 20" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="4" />
+                        <path d="M 300 50 L 350 80" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="4" />
+                    </svg>
+                    <p class="text-xs text-center text-slate-500 mt-2">Time &rarr;</p>
+                </div>
+
+                <div class="space-y-3">
+                    <p class="text-sm font-semibold text-slate-700">Research Questions:</p>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Why did it grow?</strong> Cheaper flights? Government marketing? New airport?</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Which Stage?</strong> Where is your country on the graph above? Is it brand new (Exploration) or overcrowded (Stagnation)?</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Impacts & Management Section -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-green-500">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 bg-green-100 text-green-600 rounded-lg"><i class="fas fa-balance-scale"></i></div>
+                    <h2 class="text-xl font-bold">4. Impacts & Management</h2>
+                </div>
+                <div class="space-y-3">
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Economic:</strong> Jobs created vs. "Leakage" (Does the money stay in the country or go to foreign hotel owners?).</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1">
+                        <span class="text-sm"><strong>Environmental:</strong> Conservation efforts (National Parks) vs. Damage (Pollution, coral reef destruction).</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-lg hover:bg-green-100 transition cursor-pointer">
+                        <input type="checkbox" class="check-box mt-1 text-green-600">
+                        <span class="text-sm text-green-800"><strong>Evaluate:</strong> Is the tourism "Sustainable"? (Ecotourism). How are they managing the negative impacts?</span>
+                    </label>
+                </div>
+            </div>
+        `;
+
+        const foodVocab = `
+            <div>
+                <strong class="block text-blue-900">Food Insecurity</strong>
+                <span class="text-xs text-blue-800">When people do not have reliable access to sufficient quantities of affordable, nutritious food.</span>
+            </div>
+            <div>
+                <strong class="block text-blue-900">Famine</strong>
+                <span class="text-xs text-blue-800">Extreme scarcity of food leading to starvation.</span>
+            </div>
+            <div>
+                <strong class="block text-blue-900">Soil Erosion</strong>
+                <span class="text-xs text-blue-800">The wearing away of topsoil (needed for crops) by water or wind.</span>
+            </div>
+            <div>
+                <strong class="block text-blue-900">Cash Crops</strong>
+                <span class="text-xs text-blue-800">Crops grown to sell for profit (like cotton) rather than to feed the local population.</span>
+            </div>
+        `;
+
+        const tourismVocab = `
+            <div>
+                <strong class="block text-blue-900">Ecotourism</strong>
+                <span class="text-xs text-blue-800">Tourism directed toward exotic, often threatened, natural environments, intended to support conservation efforts.</span>
+            </div>
+            <div>
+                <strong class="block text-blue-900">Leakage</strong>
+                <span class="text-xs text-blue-800">The way in which revenue generated by tourism is lost to other countries' economies (e.g., foreign owned hotels).</span>
+            </div>
+            <div>
+                <strong class="block text-blue-900">Infrastructure</strong>
+                <span class="text-xs text-blue-800">Basic structures needed for tourism (roads, airports, sewage systems).</span>
+            </div>
+            <div>
+                <strong class="block text-blue-900">Seasonality</strong>
+                <span class="text-xs text-blue-800">When tourism only happens during certain times of the year, causing unemployment in the off-season.</span>
+            </div>
+        `;
+
+        function switchTrack(track) {
+            // Reset Buttons
+            btnFood.className = "tab-inactive flex-1 sm:flex-none px-4 py-2 rounded-lg font-semibold border transition-all duration-200 flex items-center justify-center gap-2";
+            btnTourism.className = "tab-inactive flex-1 sm:flex-none px-4 py-2 rounded-lg font-semibold border transition-all duration-200 flex items-center justify-center gap-2";
+
+            // Set Content
+            if (track === 'food') {
+                contentContainer.innerHTML = foodContent;
+                vocabContainer.innerHTML = foodVocab;
+                btnFood.className = "tab-active flex-1 sm:flex-none px-4 py-2 rounded-lg font-semibold border transition-all duration-200 flex items-center justify-center gap-2";
+            } else {
+                contentContainer.innerHTML = tourismContent;
+                vocabContainer.innerHTML = tourismVocab;
+                btnTourism.className = "tab-active flex-1 sm:flex-none px-4 py-2 rounded-lg font-semibold border transition-all duration-200 flex items-center justify-center gap-2";
+            }
+        }
+    </script>
+</body>
+</html>
