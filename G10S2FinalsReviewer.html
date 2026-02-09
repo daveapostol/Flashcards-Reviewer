@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGCSE Geography Reviewer | Exam Prep</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .case-study-card { border-left: 6px solid #2563eb; }
+        .exam-tip { border-left: 6px solid #f59e0b; background-color: #fef3c7; }
+        .sticky-nav { position: sticky; top: 0; z-index: 50; }
+        .highlight-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.75rem; padding: 1.5rem; }
+        .chart-container { background: white; border-radius: 8px; padding: 20px; border: 1px solid #e2e8f0; position: relative; }
+        .source-tag { background: #334155; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        /* Chart specific styles */
+        .chart-grid-line { stroke: #e2e8f0; stroke-width: 1; }
+        .chart-axis-text { font-size: 10px; fill: #64748b; font-weight: 500; }
+        .chart-line { fill: none; stroke-width: 3; stroke-linecap: round; }
+        .chart-dot { r: 3; stroke-width: 2; fill: white; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Navigation Header -->
+    <header class="glass sticky-nav border-b border-slate-200 py-4 px-6 mb-8">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-blue-700 flex items-center">
+                <i class="fas fa-globe-americas mr-2"></i>
+                <span class="hidden sm:inline">IGCSE Geography Reviewer</span>
+                <span class="sm:hidden">IGCSE Geo Review</span>
+            </h1>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-slate-600 hover:text-blue-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex space-x-6 text-sm font-semibold uppercase tracking-wide">
+                <a href="#agriculture" class="hover:text-blue-600 transition">Agriculture</a>
+                <a href="#food-shortage" class="hover:text-blue-600 transition">Food Shortage</a>
+                <a href="#tourism" class="hover:text-blue-600 transition">Tourism</a>
+                <a href="#energy" class="hover:text-blue-600 transition">Energy</a>
+            </nav>
+
+            <!-- Mobile Nav Dropdown -->
+            <div id="mobile-menu" class="hidden w-full md:hidden mt-4 border-t border-slate-100 pt-4">
+                <div class="flex flex-col space-y-3 font-semibold text-slate-600">
+                    <a href="#agriculture" class="block p-2 rounded hover:bg-blue-50 hover:text-blue-600 transition" onclick="toggleMenu()">Agriculture</a>
+                    <a href="#food-shortage" class="block p-2 rounded hover:bg-blue-50 hover:text-blue-600 transition" onclick="toggleMenu()">Food Shortage</a>
+                    <a href="#tourism" class="block p-2 rounded hover:bg-blue-50 hover:text-blue-600 transition" onclick="toggleMenu()">Tourism</a>
+                    <a href="#energy" class="block p-2 rounded hover:bg-blue-50 hover:text-blue-600 transition" onclick="toggleMenu()">Energy</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 pb-20">
+
+        <!-- Topic 1: Agricultural Systems -->
+        <section id="agriculture" class="mb-16 scroll-mt-24">
+            <div class="flex items-center mb-6">
+                <div class="p-3 bg-blue-100 rounded-lg mr-4"><i class="fas fa-seedling text-blue-600 text-xl"></i></div>
+                <h2 class="text-2xl md:text-3xl font-bold">1. Agricultural Systems</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-lg mb-4 text-blue-600 underline">System Inputs & The Green Revolution</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong>Physical Inputs:</strong> Temperature (minimum 5°C for most crops), Rainfall (Rice requires >2000mm), Soil (Rich alluvial soil for heavy cropping).</p>
+                        <p><strong>The Green Revolution (Human Factors):</strong></p>
+                        <ul class="list-disc ml-5">
+                            <li><strong>HYVs (High Yield Varieties):</strong> Genetic seeds (like IR8 Rice) that mature faster and yield more grain.</li>
+                            <li><strong>Mechanization:</strong> Use of tractors and harvesters increases efficiency but reduces rural jobs.</li>
+                            <li><strong>Chemicals:</strong> Large-scale use of inorganic fertilizers and pesticides to ensure high yields.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-lg mb-4 text-blue-600 underline">Classification of Farming</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>Arable:</strong> Focus on crops | <strong>Pastoral:</strong> Focus on livestock.</li>
+                        <li><strong>Subsistence:</strong> For family survival (often shifting cultivation/nomadic).</li>
+                        <li><strong>Commercial:</strong> For profit (often monocultures like palm oil).</li>
+                        <li><strong>Intensive:</strong> High inputs (labor/capital) per unit of small land.</li>
+                        <li><strong>Extensive:</strong> Low inputs across a large land area.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="exam-tip p-5 rounded-lg mb-8">
+                <h4 class="font-bold text-amber-800"><i class="fas fa-pen-nib mr-2"></i>IGCSE Exam Tip: Comparing Systems</h4>
+                <p class="text-sm mt-2 italic">When comparing two photos (like in your midterm):</p>
+                <ul class="list-disc ml-5 mt-2 text-sm">
+                    <li><strong>Scale:</strong> Large fields vs small fragmented plots.</li>
+                    <li><strong>Technology:</strong> Presence of machinery vs hand tools/manual labor.</li>
+                    <li><strong>Infrastructure:</strong> Presence of irrigation canals vs reliance on rain.</li>
+                    <li><strong>Commercial:</strong> Proximity to transport (trucks) vs family dwellings on the farm.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Topic 2: Food Shortages & Darfur Case Study -->
+        <section id="food-shortage" class="mb-16 scroll-mt-24">
+            <div class="flex items-center mb-6">
+                <div class="p-3 bg-red-100 rounded-lg mr-4"><i class="fas fa-utensils text-red-600 text-xl"></i></div>
+                <h2 class="text-2xl md:text-3xl font-bold">2. Food Shortages</h2>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-md border border-slate-200 case-study-card">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
+                    <h3 class="text-xl md:text-2xl font-bold text-blue-800 mb-2 md:mb-0">Case Study: Food Shortages in Darfur, Sudan</h3>
+                    <span class="self-start bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Standard 7-Mark Focus</span>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-bold border-b pb-1 mb-2">Detailed Causes</h4>
+                        <ul class="list-disc ml-5 text-sm space-y-2">
+                            <li><strong>Natural:</strong> Persistent droughts in the Sahel region; soil erosion due to overgrazing; desertification.</li>
+                            <li><strong>Political:</strong> Conflict/Civil war results in Internally Displaced Persons (IDPs) who cannot farm their land.</li>
+                            <li><strong>Economic:</strong> Lack of government investment in rural transport; high cost of imported seeds.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold border-b pb-1 mb-2">Specific Effects</h4>
+                        <ul class="list-disc ml-5 text-sm space-y-2">
+                            <li><strong>Malnutrition:</strong> Deficiency diseases such as Marasmus and Kwashiorkor (protein lack).</li>
+                            <li><strong>Dependency:</strong> Reliance on NGOs and World Food Programme (WFP) aid.</li>
+                            <li><strong>Demographic:</strong> High infant mortality rates and reduced life expectancy.</li>
+                            <li><strong>Cycle of Poverty:</strong> Malnourished workers lack the strength to farm, leading to further shortages.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Topic 3: Tourism Systems & Seychelles Water Issue -->
+        <section id="tourism" class="mb-16 scroll-mt-24">
+            <div class="flex items-center mb-6">
+                <div class="p-3 bg-green-100 rounded-lg mr-4"><i class="fas fa-umbrella-beach text-green-600 text-xl"></i></div>
+                <h2 class="text-2xl md:text-3xl font-bold">3. Tourism: Impacts</h2>
+            </div>
+
+            <!-- New Content from Seychelles Article -->
+            <div class="highlight-box mb-8">
+                <h4 class="font-bold text-blue-800 mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>Resource Conflict: Water in Seychelles</h4>
+                <p class="text-sm mb-4">A prime example of <strong>Natural vs. Human</strong> resource management from your course materials:</p>
+                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-white p-4 rounded shadow-sm border border-red-200">
+                        <span class="font-bold text-red-600 uppercase text-xs">The Problem:</span>
+                        <p class="mt-1">Seychelles loses <strong>75%</strong> of its water through old, leaking pipes. During droughts, tourists complain about "filthy toilets" and lack of water, causing friction with locals who face restrictions.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded shadow-sm border border-blue-200">
+                        <span class="font-bold text-blue-600 uppercase text-xs">The Mismanagement:</span>
+                        <p class="mt-1">The government took a <strong>$25 million loan</strong> for a desalination plant instead of fixing leaks or building reservoirs to catch abundant rainy-season water. This increases national debt without solving the root infrastructure issue.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4 mb-8">
+                <div class="bg-green-50 p-6 rounded-lg border border-green-200">
+                    <h4 class="font-bold text-green-800 mb-3"><i class="fas fa-money-bill-wave mr-2"></i>Key Concepts</h4>
+                    <ul class="text-sm space-y-2">
+                        <li><strong>Multiplier Effect:</strong> Revenue flows through the local economy (Tourist → Hotel → Local Farmer).</li>
+                        <li><strong>Leakage:</strong> When profit leaves the country to foreign TNCs (Total opposite of multiplier).</li>
+                    </ul>
+                </div>
+                <div class="bg-orange-50 p-6 rounded-lg border border-orange-200">
+                    <h4 class="font-bold text-orange-800 mb-3"><i class="fas fa-leaf mr-2"></i>Environmental Impacts</h4>
+                    <ul class="text-sm space-y-2">
+                        <li><strong>Positive:</strong> Revenue used to protect coral reefs and national parks.</li>
+                        <li><strong>Negative:</strong> Habitat destruction for resorts; pollution from cruise ships; depletion of local water tables.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sustainable Tourism Case Study -->
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-md border border-slate-200 case-study-card">
+                <h3 class="text-xl md:text-2xl font-bold text-blue-800 mb-4">Case Study: Sustainable Tourism in Dubai, UAE</h3>
+                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                    <div class="bg-slate-50 p-4 rounded border">
+                        <h5 class="font-bold mb-2">Solar & Efficiency</h5>
+                        <p>Dubai's Sustainable City uses solar power and treats 100% of wastewater for landscape irrigation.</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded border">
+                        <h5 class="font-bold mb-2">Diversification</h5>
+                        <p>Shifting the economy from oil to tourism/knowledge to ensure stability when oil reserves are depleted.</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded border">
+                        <h5 class="font-bold mb-2">Conservation</h5>
+                        <p>The Al Marmoom Reserve protects the desert ecosystem while educating tourists about local biodiversity.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Topic 4: Energy & Global Trends -->
+        <section id="energy" class="mb-16 scroll-mt-24">
+            <div class="flex items-center mb-6">
+                <div class="p-3 bg-yellow-100 rounded-lg mr-4"><i class="fas fa-charging-station text-yellow-600 text-xl"></i></div>
+                <h2 class="text-2xl md:text-3xl font-bold">4. Energy Supply</h2>
+            </div>
+
+             <!-- SOURCE D REPLICATION (SVG LINE GRAPH) -->
+             <div class="bg-white p-4 md:p-6 rounded-xl border-2 border-slate-200 mb-8 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg md:text-xl font-bold text-slate-700">Global Electricity Trends</h3>
+                    <span class="source-tag">Midterm Analysis</span>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- SVG Chart Container with Horizontal Scroll for Mobile -->
+                    <div class="md:col-span-2 flex h-64 border border-slate-100 rounded-lg bg-white p-2 overflow-x-auto">
+                        <!-- Y-Axis Label (Sticky on left) -->
+                        <div class="w-8 flex items-center justify-center flex-shrink-0 sticky left-0 bg-white z-10">
+                            <span class="transform -rotate-90 whitespace-nowrap text-[10px] font-bold text-slate-500 tracking-wider">
+                                Billion Kilowatt-hours
+                            </span>
+                        </div>
+
+                        <!-- The Graph (Min-width ensures readability on mobile) -->
+                        <div class="flex-grow h-full min-w-[500px]">
+                            <svg viewBox="0 0 600 300" class="w-full h-full overflow-visible">
+                                <!-- Grid Lines & Y-Labels -->
+                                <!-- 12000 -->
+                                <line x1="40" y1="20" x2="580" y2="20" class="chart-grid-line" stroke-dasharray="4" />
+                                <text x="35" y="24" text-anchor="end" class="chart-axis-text">12000</text>
+                                <!-- 9000 -->
+                                <line x1="40" y1="85" x2="580" y2="85" class="chart-grid-line" stroke-dasharray="4" />
+                                <text x="35" y="89" text-anchor="end" class="chart-axis-text">9000</text>
+                                <!-- 6000 -->
+                                <line x1="40" y1="150" x2="580" y2="150" class="chart-grid-line" stroke-dasharray="4" />
+                                <text x="35" y="154" text-anchor="end" class="chart-axis-text">6000</text>
+                                <!-- 3000 -->
+                                <line x1="40" y1="215" x2="580" y2="215" class="chart-grid-line" stroke-dasharray="4" />
+                                <text x="35" y="219" text-anchor="end" class="chart-axis-text">3000</text>
+                                <!-- 0 -->
+                                <line x1="40" y1="280" x2="580" y2="280" stroke="#cbd5e1" stroke-width="2" />
+                                <text x="35" y="284" text-anchor="end" class="chart-axis-text">0</text>
+    
+                                <!-- X-Axis Labels -->
+                                <text x="40" y="295" text-anchor="middle" class="chart-axis-text">1990</text>
+                                <text x="175" y="295" text-anchor="middle" class="chart-axis-text">2000</text>
+                                <text x="310" y="295" text-anchor="middle" class="chart-axis-text">2010</text>
+                                <text x="445" y="295" text-anchor="middle" class="chart-axis-text">2020</text>
+                                <text x="580" y="295" text-anchor="middle" class="chart-axis-text">2030</text>
+    
+                                <!-- Projection Divider Line -->
+                                <line x1="445" y1="20" x2="445" y2="280" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,5" />
+                                <text x="450" y="35" class="text-[9px] fill-slate-500 font-bold uppercase">Projection</text>
+    
+                                <!-- DATA LINES -->
+                                
+                                <!-- Coal (Dark Grey): Starts ~4000, ends ~12000 -->
+                                <path d="M40,200 Q175,150 580,20" class="chart-line" stroke="#1f2937" />
+                                <text x="585" y="25" class="text-[10px] font-bold fill-slate-800">Coal</text>
+    
+                                <!-- Natural Gas (Blue): Starts ~1500, ends ~6000 -->
+                                <path d="M40,260 Q310,220 580,150" class="chart-line" stroke="#2563eb" />
+                                <text x="585" y="155" class="text-[10px] font-bold fill-blue-600">Gas</text>
+    
+                                <!-- Renewables (Green): Starts ~low, ends ~7000 (Steep curve) -->
+                                <path d="M40,275 Q400,270 580,130" class="chart-line" stroke="#16a34a" />
+                                <text x="585" y="130" class="text-[10px] font-bold fill-green-600">Renewable</text>
+    
+                                <!-- Nuclear (Purple): Flat ~2500 -->
+                                <path d="M40,230 Q310,225 580,220" class="chart-line" stroke="#9333ea" />
+                                <text x="585" y="225" class="text-[10px] font-bold fill-purple-600">Nuclear</text>
+    
+                                <!-- Oil (Red): Low and Declining slightly -->
+                                <path d="M40,250 Q310,260 580,270" class="chart-line" stroke="#dc2626" />
+                                <text x="585" y="275" class="text-[10px] font-bold fill-red-600">Oil</text>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Legend & Analysis -->
+                    <div class="flex flex-col justify-center space-y-4">
+                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                            <h4 class="font-bold text-yellow-800 text-sm mb-1"><i class="fas fa-search mr-2"></i>Graph Analysis</h4>
+                            <p class="text-xs text-slate-700">Identify the trends for the 5-mark question.</p>
+                        </div>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-center">
+                                <div class="w-8 h-1 bg-gray-800 mr-2"></div>
+                                <span><strong>Coal:</strong> Highest source (dominates).</span>
+                            </li>
+                            <li class="flex items-center">
+                                <div class="w-8 h-1 bg-green-600 mr-2"></div>
+                                <span><strong>Renewables:</strong> Steepest gradient (Fastest growth).</span>
+                            </li>
+                            <li class="flex items-center">
+                                <div class="w-8 h-1 bg-blue-600 mr-2"></div>
+                                <span><strong>Gas:</strong> Steady increase (Transition fuel).</span>
+                            </li>
+                            <li class="flex items-center">
+                                <div class="w-8 h-1 bg-red-600 mr-2"></div>
+                                <span><strong>Oil:</strong> Stagnant or declining.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-md border border-slate-200 case-study-card mb-8">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
+                    <h3 class="text-xl md:text-2xl font-bold text-blue-800 mb-2 md:mb-0">Case Study: Energy in Iceland</h3>
+                    <span class="self-start bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Geothermal & HEP</span>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 text-sm">
+                    <div>
+                        <h4 class="font-bold text-yellow-700">Physical Factor: Tectonics</h4>
+                        <p>Sitting on the <strong>Mid-Atlantic Ridge</strong> (Constructive Boundary), Iceland uses geothermal steam to power cities and heat homes/greenhouses directly.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-blue-700">Physical Factor: Relief</h4>
+                        <p>Steep mountains and glacial rivers allow for massive <strong>HEP (Hydro-Electric Power)</strong> plants which provide 70% of their electricity, mainly for the aluminum industry.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exam-tip p-5 rounded-lg border border-slate-300">
+                <h4 class="font-bold text-slate-800"><i class="fas fa-chart-line mr-2"></i>Exam Question Help</h4>
+                <p class="text-sm mt-2 mb-2">"Study the Global Electricity Trends. Describe the projected changes in global electricity generation."</p>
+                <div class="text-xs bg-white p-3 rounded border border-slate-200 italic text-slate-600">
+                    "Coal is expected to remain the dominant source, reaching 12,000 billion kWh. However, Renewables are projected to have the fastest growth rate, nearly tripling. In contrast, Oil is expected to decline slightly over the period."
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Exam Prep Section -->
+        <section class="bg-blue-900 text-white p-6 md:p-10 rounded-3xl text-center">
+            <h2 class="text-2xl md:text-3xl font-bold mb-4">Final Strategy</h2>
+            <p class="mb-8 opacity-90 italic">"Be specific. Don't just say 'it causes problems,' say 'it leads to desertification in the Sahel region of Sudan.'"</p>
+            <button onclick="window.print()" class="bg-white text-blue-900 font-bold py-3 px-8 rounded-full hover:bg-blue-50 transition shadow-lg w-full md:w-auto">
+                <i class="fas fa-print mr-2"></i>Save as PDF / Print Study Guide
+            </button>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-10 text-slate-400 text-sm border-t border-slate-200 bg-white">
+        <p>&copy; 2026 Geography Department - IGCSE S2 Finals</p>
+    </footer>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        function toggleMenu() {
+            menu.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
