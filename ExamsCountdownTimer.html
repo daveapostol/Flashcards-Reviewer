@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Countdown Timer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Deep slate background - non-distracting */
+            color: #f8fafc;
+            overflow: hidden;
+        }
+        .timer-font {
+            font-family: 'Roboto Mono', monospace;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .reminder-font {
+            font-family: 'Quicksand', sans-serif;
+        }
+        
+        /* Smooth fade transitions for reminders */
+        .fade-transition {
+            transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+        }
+        .fade-out {
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+            pointer-events: none;
+        }
+        .fade-in {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Pulse animation for when time is up */
+        @keyframes subtlePulse {
+            0%, 100% { color: #ef4444; }
+            50% { color: #f87171; }
+        }
+        .time-up {
+            animation: subtlePulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col antialiased selection:bg-slate-700">
+
+    <!-- SETUP SCREEN -->
+    <div id="setup-screen" class="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-md mx-auto fade-transition fade-in">
+        <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 w-full">
+            <h1 class="text-2xl font-semibold mb-6 text-center text-slate-200">Exam Timer Setup</h1>
+            
+            <div class="space-y-6">
+                <div>
+                    <label for="target-time" class="block text-sm font-medium text-slate-400 mb-2">End Time (Exact Clock Time)</label>
+                    <input type="time" id="target-time" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 text-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" required>
+                </div>
+
+                <div>
+                    <label for="reminder-interval" class="block text-sm font-medium text-slate-400 mb-2">Reminder Interval</label>
+                    <select id="reminder-interval" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        <option value="5">Every 5 minutes (Standard)</option>
+                        <option value="1">Every 1 minute (For testing)</option>
+                        <option value="10">Every 10 minutes</option>
+                    </select>
+                </div>
+
+                <button id="start-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg transition-colors shadow-lg shadow-blue-900/20">
+                    Start Exam Timer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TIMER DASHBOARD -->
+    <div id="timer-screen" class="absolute inset-0 flex flex-col items-center justify-between p-8 fade-transition fade-out hidden">
+        
+        <!-- Header: Current Time & Controls -->
+        <div class="w-full flex justify-between items-center text-slate-400">
+            <div class="text-xl font-medium tracking-wide">
+                Current Time: <span id="current-clock" class="timer-font text-slate-300">--:--:--</span>
+            </div>
+            <div class="flex gap-4">
+                <button id="fullscreen-btn" class="hover:text-white transition-colors px-3 py-1 border border-slate-700 rounded hover:bg-slate-800">
+                    Toggle Fullscreen
+                </button>
+                <button id="reset-btn" class="hover:text-red-400 transition-colors px-3 py-1 border border-slate-700 rounded hover:bg-slate-800 text-sm">
+                    End Early
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Countdown -->
+        <div class="flex flex-col items-center justify-center flex-1 w-full relative">
+            <h2 id="time-remaining-label" class="text-2xl md:text-3xl font-semibold text-slate-400 tracking-widest uppercase mb-4">Time Remaining</h2>
+            
+            <div id="countdown-display" class="timer-font text-[12vw] leading-none font-bold text-white tracking-tight tabular-nums flex items-baseline">
+                <span id="hours">00</span><span class="text-[8vw] mx-1 opacity-50">:</span><span id="minutes">00</span><span class="text-[8vw] mx-1 opacity-50">:</span><span id="seconds">00</span>
+            </div>
+            
+            <div id="target-display" class="mt-4 text-xl text-slate-500 timer-font">
+                Target: <span id="target-time-label">--:--</span>
+            </div>
+        </div>
+
+        <!-- Reminder Pop-up Area -->
+        <div class="w-full max-w-4xl h-40 flex items-center justify-center relative">
+            <div id="reminder-box" class="absolute inset-0 flex items-center justify-center bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 shadow-2xl fade-transition fade-out text-center">
+                <p id="reminder-text" class="text-3xl md:text-4xl reminder-font font-medium leading-relaxed text-slate-200"></p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Configuration & Data ---
+        const reminders = [
+            "No Name, No Score: Write your Name and ID before doing anything else!",
+            "Hand in the Air, Stay in Your Chair: Need a pencil or a proctor? Just raise your hand.",
+            "Pace, Don't Panic: Hit a wall? Keep moving forward and return to it later.",
+            "Don't Rush, Review: The first to leave rarely gets the highest grade. Use your extra time to double-check!",
+            "Time Called, Pen Falls: Stop writing immediately when the exam ends to avoid penalties.",
+            "Stay Put, Stay Quiet: Relax in your seat until every test is collected and you are dismissed."
+        ];
+
+        // --- State Variables ---
+        let targetDate = null;
+        let timerInterval = null;
+        let clockInterval = null;
+        let reminderInterval = null;
+        let reminderTimeout = null;
+        let currentReminderIndex = 0;
+        let isExamActive = false;
+
+        // --- DOM Elements ---
+        const setupScreen = document.getElementById('setup-screen');
+        const timerScreen = document.getElementById('timer-screen');
+        
+        const timeInput = document.getElementById('target-time');
+        const intervalInput = document.getElementById('reminder-interval');
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        const currentClockEl = document.getElementById('current-clock');
+        const targetTimeLabelEl = document.getElementById('target-time-label');
+        const countdownDisplay = document.getElementById('countdown-display');
+        const timeRemainingLabel = document.getElementById('time-remaining-label');
+        
+        const reminderBox = document.getElementById('reminder-box');
+        const reminderText = document.getElementById('reminder-text');
+
+        // --- Initialization ---
+        function init() {
+            // Set default input time to current time + 1 hour
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            timeInput.value = `${hh}:${mm}`;
+
+            // Start background clock
+            updateCurrentClock();
+            clockInterval = setInterval(updateCurrentClock, 1000);
+
+            // Event Listeners
+            startBtn.addEventListener('click', startTimer);
+            resetBtn.addEventListener('click', resetTimer);
+            fullscreenBtn.addEventListener('click', toggleFullScreen);
+        }
+
+        // --- Core Functions ---
+        function updateCurrentClock() {
+            const now = new Date();
+            currentClockEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        function startTimer() {
+            const timeVal = timeInput.value;
+            if (!timeVal) return alert("Please select a target time.");
+
+            const [targetHours, targetMinutes] = timeVal.split(':').map(Number);
+            
+            // Calculate exact target Date object based on today's date
+            targetDate = new Date();
+            targetDate.setHours(targetHours, targetMinutes, 0, 0);
+
+            // If the time is in the past, assume it means tomorrow
+            if (targetDate.getTime() < new Date().getTime()) {
+                targetDate.setDate(targetDate.getDate() + 1);
+            }
+
+            // UI Transitions
+            targetTimeLabelEl.textContent = targetDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            setupScreen.classList.remove('fade-in');
+            setupScreen.classList.add('fade-out');
+            
+            setTimeout(() => {
+                setupScreen.classList.add('hidden');
+                timerScreen.classList.remove('hidden');
+                // Tiny delay to ensure display:flex is applied before animating opacity
+                requestAnimationFrame(() => {
+                    timerScreen.classList.remove('fade-out');
+                    timerScreen.classList.add('fade-in');
+                });
+            }, 1000); // Wait for setup fade out
+
+            isExamActive = true;
+            countdownDisplay.classList.remove('time-up');
+            countdownDisplay.classList.add('text-white');
+            timeRemainingLabel.textContent = "Time Remaining";
+            
+            // Start Intervals
+            updateCountdown(); // Run once immediately
+            timerInterval = setInterval(updateCountdown, 1000);
+
+            // Handle Reminders
+            const intervalMinutes = parseInt(intervalInput.value);
+            const intervalMs = intervalMinutes * 60 * 1000;
+            
+            // Show first reminder shortly after starting
+            setTimeout(showNextReminder, 3000);
+            
+            reminderInterval = setInterval(() => {
+                if (isExamActive) showNextReminder();
+            }, intervalMs);
+        }
+
+        function updateCountdown() {
+            if (!isExamActive) return;
+
+            const now = new Date().getTime();
+            const distance = targetDate.getTime() - now;
+
+            if (distance <= 0) {
+                // Time is up
+                clearInterval(timerInterval);
+                isExamActive = false;
+                
+                hoursEl.textContent = "00";
+                minutesEl.textContent = "00";
+                secondsEl.textContent = "00";
+                
+                countdownDisplay.classList.remove('text-white');
+                countdownDisplay.classList.add('time-up');
+                timeRemainingLabel.textContent = "TIME IS UP";
+                
+                // Show final reminder
+                showFinalMessage();
+                return;
+            }
+
+            // Time calculations
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display formatting
+            hoursEl.textContent = String(hours).padStart(2, '0');
+            minutesEl.textContent = String(minutes).padStart(2, '0');
+            secondsEl.textContent = String(seconds).padStart(2, '0');
+        }
+
+        function resetTimer() {
+            if(!confirm("Are you sure you want to end the timer early?")) return;
+            
+            isExamActive = false;
+            clearInterval(timerInterval);
+            clearInterval(reminderInterval);
+            clearTimeout(reminderTimeout);
+            
+            // Hide reminder if active
+            reminderBox.classList.remove('fade-in');
+            reminderBox.classList.add('fade-out');
+
+            // UI Transitions
+            timerScreen.classList.remove('fade-in');
+            timerScreen.classList.add('fade-out');
+            
+            setTimeout(() => {
+                timerScreen.classList.add('hidden');
+                setupScreen.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    setupScreen.classList.remove('fade-out');
+                    setupScreen.classList.add('fade-in');
+                });
+            }, 1000);
+        }
+
+        // --- Reminder Logic ---
+        function showNextReminder() {
+            // Set text
+            reminderText.textContent = reminders[currentReminderIndex];
+            
+            // Fade in
+            reminderBox.classList.remove('fade-out');
+            reminderBox.classList.add('fade-in');
+
+            // Set timeout to fade out after 45 seconds (gives plenty of time to read, but isn't permanent)
+            clearTimeout(reminderTimeout);
+            reminderTimeout = setTimeout(() => {
+                reminderBox.classList.remove('fade-in');
+                reminderBox.classList.add('fade-out');
+            }, 45000);
+
+            // Increment index for next time, loop back to start if at end
+            currentReminderIndex = (currentReminderIndex + 1) % reminders.length;
+        }
+
+        function showFinalMessage() {
+            clearTimeout(reminderTimeout);
+            clearInterval(reminderInterval);
+            
+            reminderText.textContent = "TIME IS UP. Please stop writing immediately and put your pens down.";
+            reminderText.classList.add('text-red-400', 'font-bold');
+            
+            reminderBox.classList.remove('fade-out');
+            reminderBox.classList.add('fade-in');
+        }
+
+        // --- Utilities ---
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Initialize App
+        init();
+    </script>
+</body>
+</html>
