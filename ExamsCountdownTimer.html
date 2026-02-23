@@ -84,7 +84,11 @@
                 Current Time: <span id="current-clock" class="timer-font text-slate-300">--:--:--</span>
             </div>
             <div class="flex gap-4">
-                <button id="fullscreen-btn" class="hover:text-white transition-colors px-3 py-1 border border-slate-700 rounded hover:bg-slate-800">
+                <button id="quiet-btn" class="hover:text-yellow-400 transition-colors px-3 py-1 border border-slate-700 rounded hover:bg-slate-800 text-sm flex items-center gap-2" title="Play sound and show quiet reminder">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                    Quiet Please
+                </button>
+                <button id="fullscreen-btn" class="hover:text-white transition-colors px-3 py-1 border border-slate-700 rounded hover:bg-slate-800 text-sm">
                     Toggle Fullscreen
                 </button>
                 <button id="reset-btn" class="hover:text-red-400 transition-colors px-3 py-1 border border-slate-700 rounded hover:bg-slate-800 text-sm">
@@ -144,6 +148,7 @@
         const startBtn = document.getElementById('start-btn');
         const resetBtn = document.getElementById('reset-btn');
         const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const quietBtn = document.getElementById('quiet-btn');
         
         const hoursEl = document.getElementById('hours');
         const minutesEl = document.getElementById('minutes');
@@ -173,6 +178,7 @@
             startBtn.addEventListener('click', startTimer);
             resetBtn.addEventListener('click', resetTimer);
             fullscreenBtn.addEventListener('click', toggleFullScreen);
+            quietBtn.addEventListener('click', triggerQuietAlert);
         }
 
         // --- Core Functions ---
@@ -296,6 +302,9 @@
 
         // --- Reminder Logic ---
         function showNextReminder() {
+            // Reset to default style in case it was modified by a quiet alert
+            reminderText.className = "text-3xl md:text-4xl reminder-font font-medium leading-relaxed text-slate-200";
+            
             // Set text
             reminderText.textContent = reminders[currentReminderIndex];
             
@@ -303,7 +312,7 @@
             reminderBox.classList.remove('fade-out');
             reminderBox.classList.add('fade-in');
 
-            // Set timeout to fade out after 45 seconds (gives plenty of time to read, but isn't permanent)
+            // Set timeout to fade out after 45 seconds
             clearTimeout(reminderTimeout);
             reminderTimeout = setTimeout(() => {
                 reminderBox.classList.remove('fade-in');
@@ -314,12 +323,71 @@
             currentReminderIndex = (currentReminderIndex + 1) % reminders.length;
         }
 
+        function triggerQuietAlert() {
+            if (!isExamActive) return;
+            
+            // Play synthesized bell sound
+            playBellSound();
+            
+            // Interrupt current timeout
+            clearTimeout(reminderTimeout);
+            
+            // Set alert style and message
+            reminderText.className = "text-3xl md:text-4xl reminder-font font-bold leading-relaxed text-yellow-400";
+            reminderText.textContent = "Please keep the noise down. Some students are still taking the test.";
+            
+            // Ensure box is visible
+            reminderBox.classList.remove('fade-out');
+            reminderBox.classList.add('fade-in');
+
+            // Hide after 15 seconds
+            reminderTimeout = setTimeout(() => {
+                reminderBox.classList.remove('fade-in');
+                reminderBox.classList.add('fade-out');
+                
+                // Reset styles back to default after fade out completes
+                setTimeout(() => {
+                    reminderText.className = "text-3xl md:text-4xl reminder-font font-medium leading-relaxed text-slate-200";
+                }, 1500);
+            }, 15000);
+        }
+
+        function playBellSound() {
+            // Use Web Audio API to avoid needing external MP3s
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return; // Browser doesn't support Web Audio API
+            
+            const audioCtx = new AudioContext();
+            
+            function playChime(freq, startTime) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, startTime);
+                
+                // Envelope for bell-like decay
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(0.5, startTime + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 1.5);
+                
+                osc.start(startTime);
+                osc.stop(startTime + 1.5);
+            }
+
+            // Play a pleasant double chime (A5 and C#6)
+            playChime(880, audioCtx.currentTime); 
+            playChime(1108.73, audioCtx.currentTime + 0.2);
+        }
+
         function showFinalMessage() {
             clearTimeout(reminderTimeout);
             clearInterval(reminderInterval);
             
             reminderText.textContent = "TIME IS UP. Please stop writing immediately and put your pens down.";
-            reminderText.classList.add('text-red-400', 'font-bold');
+            reminderText.className = "text-3xl md:text-4xl reminder-font font-bold leading-relaxed text-red-400";
             
             reminderBox.classList.remove('fade-out');
             reminderBox.classList.add('fade-in');
